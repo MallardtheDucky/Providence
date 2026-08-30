@@ -6,11 +6,6 @@
             const container = document.getElementById('hero-canvas-container');
             if (!container) return;
 
-            
-            const isSmallOrTouch = (window.matchMedia && window.matchMedia('(max-width: 768px)').matches) ||
-                (('ontouchstart' in window || navigator.maxTouchPoints > 0) && window.innerWidth < 900);
-            window.__introIsMobile = isSmallOrTouch;
-
             scene = new THREE.Scene();
             
             scene.fog = new THREE.FogExp2(0x000000, 0.04);
@@ -19,10 +14,9 @@
             camera.position.z = 18;
             camera.position.y = 0;
 
-            
-            renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !isSmallOrTouch, powerPreference: 'low-power' });
+            renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, isSmallOrTouch ? 1.5 : 2));
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             container.appendChild(renderer.domElement);
 
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
@@ -145,7 +139,7 @@
             scene.add(birdGroup);
 
             const particleGeometry = new THREE.BufferGeometry();
-            const particleCount = isSmallOrTouch ? 350 : 1000;
+            const particleCount = 1000;
             const posArray = new Float32Array(particleCount * 3);
             for(let i=0; i < particleCount * 3; i++) {
                 posArray[i] = (Math.random() - 0.5) * 60;
@@ -184,7 +178,6 @@
         function animate() {
             requestAnimationFrame(animate);
 
-            try {
             if (particlesMesh) {
                 particlesMesh.rotation.y += 0.0005;
                 particlesMesh.rotation.x += 0.0002;
@@ -286,12 +279,6 @@
             }
 
             renderer.render(scene, camera);
-            } catch (err) {
-                
-                console.warn('Intro animation hit an error, revealing the site instead of leaving it stuck.', err);
-                isIntroActive = false;
-                if (window.__forceRevealHero) window.__forceRevealHero();
-            }
         }
 
 

@@ -83,58 +83,8 @@
             });
         }
 
-        
-        function supportsWebGL() {
-            try {
-                const canvas = document.createElement('canvas');
-                return !!(window.WebGLRenderingContext &&
-                    (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
-            } catch (e) {
-                return false;
-            }
-        }
-
-        
-        function revealHeroWithoutIntro() {
-            const introBg = document.getElementById('intro-bg');
-            const mottoContainer = document.getElementById('intro-motto-container');
-            const canvasContainer = document.getElementById('hero-canvas-container');
-            const heroContent = document.getElementById('hero-content');
-
-            if (introBg) introBg.remove();
-            if (mottoContainer) mottoContainer.remove();
-            if (canvasContainer) canvasContainer.style.zIndex = '0';
-            if (heroContent) {
-                heroContent.style.transition = 'none';
-                heroContent.style.opacity = '1';
-            }
-        }
-
-        
-        window.__forceRevealHero = function() {
-            const heroContent = document.getElementById('hero-content');
-            if (!heroContent || heroContent.style.opacity !== '1') {
-                revealHeroWithoutIntro();
-            }
-        };
-
         window.onload = function() {
-            const prefersReducedMotion = window.matchMedia &&
-                window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-            if (supportsWebGL() && !prefersReducedMotion) {
-                try {
-                    initThreeJS();
-                    
-                    setTimeout(window.__forceRevealHero, 9000);
-                } catch (err) {
-                    console.warn('3D intro failed to start, showing the site without it.', err);
-                    revealHeroWithoutIntro();
-                }
-            } else {
-                revealHeroWithoutIntro();
-            }
-
+            initThreeJS();
             navigateTo('home');
 
             const mapWrap = document.getElementById('world-map-wrap');

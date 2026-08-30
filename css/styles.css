@@ -236,6 +236,28 @@
         ::-webkit-scrollbar-thumb:hover { background: #444; }
 
         
+        .ticker-wrap {
+            position: relative;
+            display: flex;
+            overflow: hidden;
+            white-space: nowrap;
+            width: 100%;
+        }
+        .ticker-track {
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+            flex-shrink: 0;
+            min-width: 100%;
+            padding-right: 4rem;
+            animation: tickerScroll 25s linear infinite;
+        }
+        @keyframes tickerScroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-100%); }
+        }
+
+        
         @media (max-width: 767px), (hover: none) and (pointer: coarse) {
             .bg-fixed {
                 background-attachment: scroll;

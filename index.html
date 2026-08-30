@@ -28,6 +28,26 @@
     <script src="js/tailwind-config.js?v=2"></script>
 
     <style>
+        .ticker-wrap {
+            position: relative;
+            display: flex;
+            overflow: hidden;
+            white-space: nowrap;
+            width: 100%;
+        }
+        .ticker-track {
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+            flex-shrink: 0;
+            min-width: 100%;
+            padding-right: 4rem;
+            animation: tickerScroll 25s linear infinite;
+        }
+        @keyframes tickerScroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-100%); }
+        }
         @media (max-width: 1023px) {
             .desktop-nav-links { display: none !important; }
         }
@@ -186,15 +206,15 @@
             </section>
 
             
-            <div class="bg-[#050505] text-white font-mono text-[0.6rem] uppercase tracking-[0.2em] py-3 overflow-hidden border-b border-gray-900 flex relative z-10 whitespace-nowrap">
-                <div class="animate-marquee flex gap-16 items-center w-max min-w-full justify-around">
+            <div class="ticker-wrap bg-[#050505] text-white font-mono text-[0.6rem] uppercase tracking-[0.2em] py-3 border-b border-gray-900 z-10">
+                <div class="ticker-track">
                     <span class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div> Sector 4: STABLE</span>
                     <span class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse"></div> São Gabriel Zone: MINOR FLUCTUATION (0.4 mSv/h)</span>
                     <span class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div> Providence HQ: OPTIMAL</span>
                     <span class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></div> Outpost 88: CONTAINMENT ALERT</span>
                     <span class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div> Sector 4: STABLE</span>
                 </div>
-                <div class="animate-marquee flex gap-16 items-center w-max min-w-full justify-around absolute top-3 left-full">
+                <div class="ticker-track">
                     <span class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div> Sector 4: STABLE</span>
                     <span class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse"></div> São Gabriel Zone: MINOR FLUCTUATION (0.4 mSv/h)</span>
                     <span class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div> Providence HQ: OPTIMAL</span>

@@ -1,0 +1,236 @@
+        body {
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            background-color: #000000;
+        }
+        
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: white; }
+        }
+        .animate-typing {
+            animation: typing 2.5s steps(40, end) forwards, blink-caret 0.75s step-end infinite;
+        }
+
+        
+        .page-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .page-section.active {
+            display: block;
+            opacity: 1;
+        }
+
+        
+        #hero-canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none; 
+        }
+        
+        .hero-content-overlay {
+            position: relative;
+            z-index: 10;
+            pointer-events: none; 
+        }
+        .hero-content-overlay > * {
+            pointer-events: auto;
+        }
+
+        
+        .text-glow {
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .fade-in-up.appear {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        
+        .btn-corporate {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            transition: all 0.3s ease;
+        }
+        .btn-corporate::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: -1;
+        }
+        .btn-corporate:hover::before {
+            left: 0;
+        }
+        .btn-corporate:hover {
+            border-color: rgba(255, 255, 255, 1);
+            color: #000 !important;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+        }
+
+        
+        .data-panel {
+            background: rgba(10, 10, 10, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+        }
+        .data-panel:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        
+        .scanline-img {
+            position: relative;
+            overflow: hidden;
+        }
+        .scanline-img::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0) 50%,
+                rgba(0,0,0,0.2) 50%
+            );
+            background-size: 100% 4px;
+            z-index: 2;
+            pointer-events: none;
+        }
+        
+        
+        .bg-grid {
+            background-size: 40px 40px;
+            background-position: center center;
+        }
+
+        ::selection {
+            background: #ffffff;
+            color: #000000;
+        }
+
+        
+        #world-map-wrap .landmass-dots {
+            opacity: 0;
+            transition: opacity 1.8s ease;
+        }
+        #world-map-wrap.in-view .landmass-dots {
+            opacity: 1;
+        }
+        #world-map-wrap .loc-dot,
+        #world-map-wrap .loc-ping {
+            opacity: 0;
+        }
+        #world-map-wrap .loc-ping {
+            fill: none;
+            stroke: rgba(255,255,255,0.9);
+            stroke-width: 1;
+        }
+        #world-map-wrap.in-view .loc-dot {
+            animation: locDotIn 0.5s ease forwards;
+            animation-delay: calc(var(--d) + 0.4s);
+        }
+        #world-map-wrap.in-view .loc-ping {
+            animation: locPing 2.2s ease-out forwards;
+            animation-delay: calc(var(--d) + 0.4s);
+        }
+        .loc-hq .loc-dot {
+            filter: drop-shadow(0 0 7px rgba(255,255,255,0.95));
+        }
+        .loc-hub .loc-dot {
+            filter: drop-shadow(0 0 3px rgba(255,255,255,0.6));
+        }
+        #world-map-wrap.in-view .loc-node .loc-dot {
+            animation-name: locDotInSmall;
+        }
+        .loc-marker { cursor: pointer; }
+        @keyframes locDotIn {
+            from { opacity: 0; transform: scale(0); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes locDotInSmall {
+            from { opacity: 0; transform: scale(0); }
+            to { opacity: 0.85; transform: scale(1); }
+        }
+        @keyframes locPing {
+            0% { r: 0; opacity: 0.9; stroke: rgba(255,255,255,0.9); stroke-width: 1; fill: none; }
+            70% { opacity: 0; }
+            100% { r: var(--rpmax); opacity: 0; stroke: rgba(255,255,255,0); fill: none; }
+        }
+
+        
+        #grain-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 80;
+            pointer-events: none;
+            opacity: 0.05;
+            mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+        #vignette-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 79;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.55) 100%);
+        }
+
+        
+        .fade-in-up {
+            transform: translateY(34px) scale(0.985);
+            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .fade-in-up.appear {
+            transform: translateY(0) scale(1);
+        }
+
+        
+        .data-panel {
+            transition: border-color 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+        }
+        .data-panel:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px -20px rgba(255,255,255,0.08), 0 0 0 1px rgba(255,255,255,0.06) inset;
+        }
+
+        
+        .scanline-img img {
+            transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.9s ease, filter 0.9s ease;
+            filter: contrast(1.05) brightness(0.95);
+        }
+        .scanline-img:hover img {
+            filter: contrast(1.1) brightness(1.05);
+        }
+
+        
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 0; border: 2px solid #000; }
+        ::-webkit-scrollbar-thumb:hover { background: #444; }

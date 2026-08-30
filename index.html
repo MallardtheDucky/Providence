@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth bg-black text-gray-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Providence Continuity Corporation</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/tailwind-config.js"></script>
+
+</head>
+<body class="bg-black text-gray-200 antialiased selection:bg-white selection:text-black">
+
+    <div id="vignette-overlay"></div>
+    <div id="grain-overlay"></div>
+
+    
+    <div id="intro-bg" class="fixed inset-0 z-[90] bg-[#020202] transition-opacity duration-[1500ms] pointer-events-none flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 bg-grid-pattern bg-[length:40px_40px] opacity-[0.03]"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05)_0%,transparent_60%)]"></div>
+    </div>
+    
+    <div id="intro-motto-container" class="fixed inset-0 z-[95] flex flex-col items-center justify-center pointer-events-none">
+        
+        <div class="h-48 md:h-64 w-full"></div>
+        <div id="intro-motto" class="text-center opacity-0 transform translate-y-8 transition-all duration-[2000ms] ease-out">
+            <p class="font-sans font-light text-2xl md:text-4xl text-white tracking-wide text-glow mb-4">Tomorrow, Made Certain.</p>
+            <p class="font-mono text-[0.65rem] md:text-sm uppercase tracking-[0.4em] text-gray-500">By Providence</p>
+        </div>
+    </div>
+
+    <nav id="navbar" class="fixed top-0 left-0 w-full z-50 transition-all duration-500 py-6 px-6 md:px-12 flex justify-between items-center border-b border-transparent">
+        <div class="flex items-center gap-4 cursor-pointer z-50" onclick="navigateTo('home')">
+            
+            <div class="w-8 h-8 relative">
+                <svg viewBox="0 0 100 100" class="w-full h-full" style="fill: none; stroke: white; stroke-width: 3; stroke-linejoin: round;">
+                    <polygon points="15,40 25,35 25,45" fill="white"/>
+                    <polygon points="25,35 40,35 30,55" />
+                    <polygon points="40,35 50,30 30,55" />
+                    <polygon points="50,30 50,55 30,55" />
+                    <polygon points="50,30 75,35 50,55" />
+                    <polygon points="75,35 95,40 50,55" />
+                    <polygon points="30,55 50,55 60,75 40,90 40,65" fill="white"/>
+                </svg>
+            </div>
+            <div class="flex flex-col">
+                <span class="font-mono font-bold text-lg tracking-[0.2em] uppercase leading-none text-white">Providence</span>
+                <span class="font-mono text-[0.55rem] tracking-[0.3em] text-gray-500 uppercase mt-1">Continuity Corp</span>
+            </div>
+        </div>
+        
+        
+        <div class="hidden lg:flex gap-8 text-[0.65rem] uppercase tracking-[0.2em] font-mono font-medium text-gray-400">
+            <button onclick="navigateTo('home')" class="hover:text-white transition-colors py-2 relative group nav-link" data-target="home">
+                Overview
+                <span class="absolute bottom-0 left-0 w-0 h-[1px] bg-white transition-all duration-300 group-hover:w-full"></span>
+            </button>
+            <button onclick="navigateTo('divisions')" class="hover:text-white transition-colors py-2 relative group nav-link" data-target="divisions">
+                Divisions & Holdings
+                <span class="absolute bottom-0 left-0 w-0 h-[1px] bg-white transition-all duration-300 group-hover:w-full"></span>
+            </button>
+            <button onclick="navigateTo('community')" class="hover:text-white transition-colors py-2 relative group nav-link" data-target="community">
+                Community Solutions
+                <span class="absolute bottom-0 left-0 w-0 h-[1px] bg-white transition-all duration-300 group-hover:w-full"></span>
+            </button>
+            <button onclick="navigateTo('science')" class="hover:text-white transition-colors py-2 relative group nav-link" data-target="science">
+                Applied Sciences
+                <span class="absolute bottom-0 left-0 w-0 h-[1px] bg-white transition-all duration-300 group-hover:w-full"></span>
+            </button>
+            <button onclick="navigateTo('leadership')" class="hover:text-white transition-colors py-2 relative group nav-link" data-target="leadership">
+                Leadership
+                <span class="absolute bottom-0 left-0 w-0 h-[1px] bg-white transition-all duration-300 group-hover:w-full"></span>
+            </button>
+        </div>
+
+        
+        <button id="mobile-menu-btn" class="lg:hidden text-white focus:outline-none z-50">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+
+        
+        <div id="mobile-menu" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-40 hidden flex-col justify-center items-center gap-8 text-xs uppercase tracking-[0.2em] font-mono">
+             <button onclick="navigateTo('home'); toggleMobileMenu()" class="hover:text-white text-gray-400 transition-colors">Overview</button>
+             <button onclick="navigateTo('divisions'); toggleMobileMenu()" class="hover:text-white text-gray-400 transition-colors">Divisions & Holdings</button>
+             <button onclick="navigateTo('community'); toggleMobileMenu()" class="hover:text-white text-gray-400 transition-colors">Community Solutions</button>
+             <button onclick="navigateTo('science'); toggleMobileMenu()" class="hover:text-white text-gray-400 transition-colors">Applied Sciences</button>
+             <button onclick="navigateTo('leadership'); toggleMobileMenu()" class="hover:text-white text-gray-400 transition-colors">Leadership</button>
+        </div>
+    </nav>
+
+    
+    <main id="main-content">
+        
+        <div id="page-home" class="page-section active">
+            
+            <section class="relative h-screen w-full overflow-hidden flex flex-col justify-center items-center">
+                
+                <div id="hero-canvas-container"></div>
+                
+                
+                <div id="hero-content" class="hero-content-overlay flex flex-col items-center justify-center text-center mt-40 opacity-0 transition-opacity duration-[2000ms]">
+                    <h1 class="text-4xl md:text-6xl lg:text-7xl font-sans font-light tracking-tight text-white mb-6 text-glow">
+                        Tomorrow, <br class="md:hidden">Made Certain <br class="hidden md:block">By Providence.
+                    </h1>
+                    <div class="h-[1px] w-24 bg-white/30 mb-6"></div>
+                    <p class="font-mono text-xs md:text-sm uppercase tracking-[0.3em] text-gray-400 mb-12">
+                        Global Anomalous Risk Management & Commercial Integration
+                    </p>
+                    
+                    <div class="flex gap-6 pointer-events-auto">
+                        <button onclick="navigateTo('divisions')" class="btn-corporate py-4 px-8 text-[0.65rem] font-mono tracking-widest uppercase text-white hover:text-black">
+                            Explore Divisions
+                        </button>
+                    </div>
+                </div>
+
+                
+                <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-pulse-slow">
+                    <span class="text-[0.5rem] font-mono uppercase tracking-[0.2em] text-gray-500 mb-2">Scroll</span>
+                    <div class="w-[1px] h-12 bg-gradient-to-b from-gray-500 to-transparent"></div>
+                </div>
+            </section>
+
+            
+            <section class="py-24 px-6 md:px-16 lg:px-24 bg-[#050505] border-t border-b border-gray-900 relative z-10">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
+                    <div class="data-panel p-8 fade-in-up">
+                        <h4 class="text-3xl font-mono font-light text-white mb-1">2012</h4>
+                        <div class="h-[1px] w-8 bg-gray-700 mb-4"></div>
+                        <p class="text-[0.65rem] uppercase tracking-widest text-gray-400 font-mono">Founded Post-Culling</p>
+                    </div>
+                    <div class="data-panel p-8 fade-in-up" style="transition-delay: 100ms;">
+                        <h4 class="text-3xl font-mono font-light text-white mb-1">380k+</h4>
+                        <div class="h-[1px] w-8 bg-gray-700 mb-4"></div>
+                        <p class="text-[0.65rem] uppercase tracking-widest text-gray-400 font-mono">Global Employees</p>
+                    </div>
+                    <div class="data-panel p-8 fade-in-up" style="transition-delay: 200ms;">
+                        <h4 class="text-3xl font-mono font-light text-white mb-1">$1.4T</h4>
+                        <div class="h-[1px] w-8 bg-gray-700 mb-4"></div>
+                        <p class="text-[0.65rem] uppercase tracking-widest text-gray-400 font-mono">Market Capitalization</p>
+                    </div>
+                    <div class="data-panel p-8 fade-in-up" style="transition-delay: 300ms;">
+                        <h4 class="text-3xl font-mono font-light text-white mb-1">195</h4>
+                        <div class="h-[1px] w-8 bg-gray-700 mb-4"></div>
+                        <p class="text-[0.65rem] uppercase tracking-widest text-gray-400 font-mono">Countries Served</p>
+                    </div>
+                </div>
+            </section>
+
+            
+            <div class="bg-[#050505] text-white font-mono text-[0.6rem] uppercase tracking-[0.2em] py-3 overflow-hidden border-b border-gray-900 flex relative z-10 whitespace-nowrap">
+                <div class="animate-marquee flex gap-16 items-center w-max min-w-full justify-around">
+                    <span class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div> Sector 4: STABLE</span>
+                    <span class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse"></div> São Gabriel Zone: MINOR FLUCTUATION (0.4 mSv/h)</span>
+                    <span class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div> Providence HQ: OPTIMAL</span>
+                    <span class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></div> Outpost 88: CONTAINMENT ALERT</span>
+                    <span class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div> Sector 4: STABLE</span>
+                </div>
+                <div class="animate-marquee flex gap-16 items-center w-max min-w-full justify-around absolute top-3 left-full">
+                    <span class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div> Sector 4: STABLE</span>
+                    <span class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse"></div> São Gabriel Zone: MINOR FLUCTUATION (0.4 mSv/h)</span>
+                    <span class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div> Providence HQ: OPTIMAL</span>
+                    <span class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></div> Outpost 88: CONTAINMENT ALERT</span>
+                    <span class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div> Sector 4: STABLE</span>
+                </div>
+            </div>
+
+            
+            <section class="py-24 px-6 md:px-16 lg:px-24 bg-[#020202] relative z-10 border-b border-gray-900">
+                <div class="max-w-7xl mx-auto">
+                    <h3 class="text-xs uppercase tracking-[0.3em] font-mono text-gray-500 mb-12 text-center">Current Operational Focus</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <div class="fade-in-up group cursor-pointer">
+                            <div class="w-full h-64 scanline-img overflow-hidden mb-6 border border-gray-800 group-hover:border-white transition-colors duration-300">
+                                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Dalecarlia_Reservoir_Filtration_Tanks.jpg?width=2000" class="w-full h-full object-cover grayscale opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" alt="Advanced Filtration">
+                            </div>
+                            <h4 class="text-lg font-sans text-white mb-2 group-hover:text-glow transition-all">Advanced Filtration Systems</h4>
+                            <p class="text-sm text-gray-500 font-light leading-relaxed">Next-generation particulate and anomalous energy scrubbers deployed in urban centers globally.</p>
+                        </div>
+                        <div class="fade-in-up group cursor-pointer" style="transition-delay: 100ms;">
+                            <div class="w-full h-64 scanline-img overflow-hidden mb-6 border border-gray-800 group-hover:border-white transition-colors duration-300">
+                                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Refinery_Tanks_5.jpg?width=2000" class="w-full h-full object-cover grayscale opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" alt="Automated Perimeter">
+                            </div>
+                            <h4 class="text-lg font-sans text-white mb-2 group-hover:text-glow transition-all">Automated Perimeter Defense</h4>
+                            <p class="text-sm text-gray-500 font-light leading-relaxed">Drone-assisted autonomous shielding ensuring Class-3 zones remain structurally intact during events.</p>
+                        </div>
+                        <div class="fade-in-up group cursor-pointer" style="transition-delay: 200ms;">
+                            <div class="w-full h-64 scanline-img overflow-hidden mb-6 border border-gray-800 group-hover:border-white transition-colors duration-300">
+                                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Researchers_in_laboratory.jpg?width=2000" class="w-full h-full object-cover grayscale opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" alt="Biological Research">
+                            </div>
+                            <h4 class="text-lg font-sans text-white mb-2 group-hover:text-glow transition-all">Biological Research Hubs</h4>
+                            <p class="text-sm text-gray-500 font-light leading-relaxed">Proprietary studies on prolonged human exposure and resulting genetic adaptations.</p>
+                        </div>
+                        <div class="fade-in-up group cursor-pointer" style="transition-delay: 300ms;">
+                            <div class="w-full h-64 scanline-img overflow-hidden mb-6 border border-gray-800 group-hover:border-white transition-colors duration-300">
+                                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Ifarm_inside_interior_New.jpg?width=2000" class="w-full h-full object-cover grayscale opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" alt="Continuity Communities">
+                            </div>
+                            <h4 class="text-lg font-sans text-white mb-2 group-hover:text-glow transition-all">Continuity Communities</h4>
+                            <p class="text-sm text-gray-500 font-light leading-relaxed">Model townships built through Project HOMESTEAD, offering full self-sufficiency beside active Zones.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            
+            <section class="py-32 px-6 md:px-16 lg:px-24 bg-black relative z-10 bg-grid-pattern bg-grid">
+                <div class="max-w-4xl mx-auto text-center fade-in-up">
+                    <h2 class="text-2xl md:text-4xl font-sans font-light mb-8 leading-tight">
+                        To make the anomalous <span class="font-medium text-white">useful, safe, and available</span> to everyone.
+                    </h2>
+                    <p class="text-gray-400 leading-relaxed text-lg max-w-3xl mx-auto font-light mb-8">
+                        Providence emerged from the wreckage the Culling left behind. While governments focused on containment and militaries on weaponization, we saw an unclaimed industry. Today, we are the largest commercial anomalous-materials company in the world. From home detection kits to entire model townships, our infrastructure is woven into the fabric of the New Normal.
+                    </p>
+                    <button onclick="navigateTo('divisions')" class="text-xs font-mono uppercase tracking-[0.2em] text-white hover:text-gray-400 transition-colors border-b border-white/30 hover:border-transparent pb-1">
+                        View Our Holdings &#8594;
+                    </button>
+                </div>
+            </section>
+
+
+            
+            <section class="py-24 px-6 md:px-16 lg:px-24 bg-[#020202] border-t border-gray-900 relative z-10 overflow-hidden">
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-4 fade-in-up">
+                        <h3 class="text-xs uppercase tracking-[0.3em] font-mono text-gray-500 mb-4">Global Operational Footprint</h3>
+                        <h2 class="text-2xl md:text-3xl font-sans font-light text-white mb-4">A network that reaches <span class="font-medium">195 countries.</span></h2>
+                        <p class="text-gray-500 text-sm font-light max-w-2xl mx-auto leading-relaxed">Flagship holdings, regional offices, and monitored facility nodes, tracked live from the Continuity Spire.</p>
+                    </div>
+                    <div id="world-map-wrap" class="relative w-full mt-12 fade-in-up">
+                        <svg viewBox="0 0 1000 520" preserveAspectRatio="xMidYMid meet" class="w-full h-auto" id="world-map-svg"><g class="landmass-dots" fill="rgba(255,255,255,0.16)"><circle cx="296.1" cy="412.5" r="1.15"/><circle cx="305.0" cy="412.5" r="1.15"/><circle cx="296.1" cy="403.3" r="1.15"/><circle cx="305.0" cy="403.3" r="1.15"/><circle cx="296.1" cy="394.0" r="1.15"/><circle cx="305.0" cy="394.0" r="1.15"/><circle cx="971.7" cy="394.0" r="1.15"/><circle cx="305.0" cy="384.8" r="1.15"/><circle cx="313.9" cy="384.8" r="1.15"/><circle cx="909.4" cy="384.8" r="1.15"/><circle cx="296.1" cy="375.6" r="1.15"/><circle cx="305.0" cy="375.6" r="1.15"/><circle cx="313.9" cy="375.6" r="1.15"/><circle cx="322.8" cy="375.6" r="1.15"/><circle cx="989.4" cy="375.6" r="1.15"/><circle cx="305.0" cy="366.3" r="1.15"/><circle cx="313.9" cy="366.3" r="1.15"/><circle cx="322.8" cy="366.3" r="1.15"/><circle cx="331.7" cy="366.3" r="1.15"/><circle cx="340.6" cy="366.3" r="1.15"/><circle cx="891.7" cy="366.3" r="1.15"/><circle cx="900.6" cy="366.3" r="1.15"/><circle cx="909.4" cy="366.3" r="1.15"/><circle cx="305.0" cy="357.1" r="1.15"/><circle cx="313.9" cy="357.1" r="1.15"/><circle cx="322.8" cy="357.1" r="1.15"/><circle cx="331.7" cy="357.1" r="1.15"/><circle cx="340.6" cy="357.1" r="1.15"/><circle cx="349.4" cy="357.1" r="1.15"/><circle cx="553.9" cy="357.1" r="1.15"/><circle cx="562.8" cy="357.1" r="1.15"/><circle cx="571.7" cy="357.1" r="1.15"/><circle cx="829.4" cy="357.1" r="1.15"/><circle cx="838.3" cy="357.1" r="1.15"/><circle cx="891.7" cy="357.1" r="1.15"/><circle cx="900.6" cy="357.1" r="1.15"/><circle cx="909.4" cy="357.1" r="1.15"/><circle cx="918.3" cy="357.1" r="1.15"/><circle cx="305.0" cy="347.8" r="1.15"/><circle cx="313.9" cy="347.8" r="1.15"/><circle cx="322.8" cy="347.8" r="1.15"/><circle cx="331.7" cy="347.8" r="1.15"/><circle cx="340.6" cy="347.8" r="1.15"/><circle cx="349.4" cy="347.8" r="1.15"/><circle cx="553.9" cy="347.8" r="1.15"/><circle cx="562.8" cy="347.8" r="1.15"/><circle cx="571.7" cy="347.8" r="1.15"/><circle cx="580.6" cy="347.8" r="1.15"/><circle cx="820.6" cy="347.8" r="1.15"/><circle cx="829.4" cy="347.8" r="1.15"/><circle cx="838.3" cy="347.8" r="1.15"/><circle cx="847.2" cy="347.8" r="1.15"/><circle cx="856.1" cy="347.8" r="1.15"/><circle cx="865.0" cy="347.8" r="1.15"/><circle cx="873.9" cy="347.8" r="1.15"/><circle cx="882.8" cy="347.8" r="1.15"/><circle cx="891.7" cy="347.8" r="1.15"/><circle cx="900.6" cy="347.8" r="1.15"/><circle cx="909.4" cy="347.8" r="1.15"/><circle cx="918.3" cy="347.8" r="1.15"/><circle cx="305.0" cy="338.6" r="1.15"/><circle cx="313.9" cy="338.6" r="1.15"/><circle cx="322.8" cy="338.6" r="1.15"/><circle cx="331.7" cy="338.6" r="1.15"/><circle cx="340.6" cy="338.6" r="1.15"/><circle cx="349.4" cy="338.6" r="1.15"/><circle cx="358.3" cy="338.6" r="1.15"/><circle cx="545.0" cy="338.6" r="1.15"/><circle cx="553.9" cy="338.6" r="1.15"/><circle cx="562.8" cy="338.6" r="1.15"/><circle cx="571.7" cy="338.6" r="1.15"/><circle cx="580.6" cy="338.6" r="1.15"/><circle cx="589.4" cy="338.6" r="1.15"/><circle cx="820.6" cy="338.6" r="1.15"/><circle cx="829.4" cy="338.6" r="1.15"/><circle cx="838.3" cy="338.6" r="1.15"/><circle cx="847.2" cy="338.6" r="1.15"/><circle cx="856.1" cy="338.6" r="1.15"/><circle cx="865.0" cy="338.6" r="1.15"/><circle cx="873.9" cy="338.6" r="1.15"/><circle cx="882.8" cy="338.6" r="1.15"/><circle cx="891.7" cy="338.6" r="1.15"/><circle cx="900.6" cy="338.6" r="1.15"/><circle cx="909.4" cy="338.6" r="1.15"/><circle cx="918.3" cy="338.6" r="1.15"/><circle cx="305.0" cy="329.3" r="1.15"/><circle cx="313.9" cy="329.3" r="1.15"/><circle cx="322.8" cy="329.3" r="1.15"/><circle cx="331.7" cy="329.3" r="1.15"/><circle cx="340.6" cy="329.3" r="1.15"/><circle cx="349.4" cy="329.3" r="1.15"/><circle cx="358.3" cy="329.3" r="1.15"/><circle cx="367.2" cy="329.3" r="1.15"/><circle cx="545.0" cy="329.3" r="1.15"/><circle cx="553.9" cy="329.3" r="1.15"/><circle cx="562.8" cy="329.3" r="1.15"/><circle cx="571.7" cy="329.3" r="1.15"/><circle cx="580.6" cy="329.3" r="1.15"/><circle cx="589.4" cy="329.3" r="1.15"/><circle cx="598.3" cy="329.3" r="1.15"/><circle cx="625.0" cy="329.3" r="1.15"/><circle cx="820.6" cy="329.3" r="1.15"/><circle cx="829.4" cy="329.3" r="1.15"/><circle cx="838.3" cy="329.3" r="1.15"/><circle cx="847.2" cy="329.3" r="1.15"/><circle cx="856.1" cy="329.3" r="1.15"/><circle cx="865.0" cy="329.3" r="1.15"/><circle cx="873.9" cy="329.3" r="1.15"/><circle cx="882.8" cy="329.3" r="1.15"/><circle cx="891.7" cy="329.3" r="1.15"/><circle cx="900.6" cy="329.3" r="1.15"/><circle cx="909.4" cy="329.3" r="1.15"/><circle cx="918.3" cy="329.3" r="1.15"/><circle cx="313.9" cy="320.1" r="1.15"/><circle cx="322.8" cy="320.1" r="1.15"/><circle cx="331.7" cy="320.1" r="1.15"/><circle cx="340.6" cy="320.1" r="1.15"/><circle cx="349.4" cy="320.1" r="1.15"/><circle cx="358.3" cy="320.1" r="1.15"/><circle cx="367.2" cy="320.1" r="1.15"/><circle cx="376.1" cy="320.1" r="1.15"/><circle cx="385.0" cy="320.1" r="1.15"/><circle cx="545.0" cy="320.1" r="1.15"/><circle cx="553.9" cy="320.1" r="1.15"/><circle cx="562.8" cy="320.1" r="1.15"/><circle cx="571.7" cy="320.1" r="1.15"/><circle cx="580.6" cy="320.1" r="1.15"/><circle cx="589.4" cy="320.1" r="1.15"/><circle cx="625.0" cy="320.1" r="1.15"/><circle cx="633.9" cy="320.1" r="1.15"/><circle cx="820.6" cy="320.1" r="1.15"/><circle cx="829.4" cy="320.1" r="1.15"/><circle cx="838.3" cy="320.1" r="1.15"/><circle cx="847.2" cy="320.1" r="1.15"/><circle cx="856.1" cy="320.1" r="1.15"/><circle cx="865.0" cy="320.1" r="1.15"/><circle cx="873.9" cy="320.1" r="1.15"/><circle cx="882.8" cy="320.1" r="1.15"/><circle cx="891.7" cy="320.1" r="1.15"/><circle cx="900.6" cy="320.1" r="1.15"/><circle cx="909.4" cy="320.1" r="1.15"/><circle cx="305.0" cy="310.8" r="1.15"/><circle cx="313.9" cy="310.8" r="1.15"/><circle cx="322.8" cy="310.8" r="1.15"/><circle cx="331.7" cy="310.8" r="1.15"/><circle cx="340.6" cy="310.8" r="1.15"/><circle cx="349.4" cy="310.8" r="1.15"/><circle cx="358.3" cy="310.8" r="1.15"/><circle cx="367.2" cy="310.8" r="1.15"/><circle cx="376.1" cy="310.8" r="1.15"/><circle cx="385.0" cy="310.8" r="1.15"/><circle cx="536.1" cy="310.8" r="1.15"/><circle cx="545.0" cy="310.8" r="1.15"/><circle cx="553.9" cy="310.8" r="1.15"/><circle cx="562.8" cy="310.8" r="1.15"/><circle cx="571.7" cy="310.8" r="1.15"/><circle cx="580.6" cy="310.8" r="1.15"/><circle cx="589.4" cy="310.8" r="1.15"/><circle cx="598.3" cy="310.8" r="1.15"/><circle cx="625.0" cy="310.8" r="1.15"/><circle cx="633.9" cy="310.8" r="1.15"/><circle cx="847.2" cy="310.8" r="1.15"/><circle cx="856.1" cy="310.8" r="1.15"/><circle cx="865.0" cy="310.8" r="1.15"/><circle cx="873.9" cy="310.8" r="1.15"/><circle cx="882.8" cy="310.8" r="1.15"/><circle cx="891.7" cy="310.8" r="1.15"/><circle cx="900.6" cy="310.8" r="1.15"/><circle cx="296.1" cy="301.6" r="1.15"/><circle cx="305.0" cy="301.6" r="1.15"/><circle cx="313.9" cy="301.6" r="1.15"/><circle cx="322.8" cy="301.6" r="1.15"/><circle cx="331.7" cy="301.6" r="1.15"/><circle cx="340.6" cy="301.6" r="1.15"/><circle cx="349.4" cy="301.6" r="1.15"/><circle cx="358.3" cy="301.6" r="1.15"/><circle cx="367.2" cy="301.6" r="1.15"/><circle cx="376.1" cy="301.6" r="1.15"/><circle cx="385.0" cy="301.6" r="1.15"/><circle cx="536.1" cy="301.6" r="1.15"/><circle cx="545.0" cy="301.6" r="1.15"/><circle cx="553.9" cy="301.6" r="1.15"/><circle cx="562.8" cy="301.6" r="1.15"/><circle cx="571.7" cy="301.6" r="1.15"/><circle cx="580.6" cy="301.6" r="1.15"/><circle cx="589.4" cy="301.6" r="1.15"/><circle cx="598.3" cy="301.6" r="1.15"/><circle cx="607.2" cy="301.6" r="1.15"/><circle cx="633.9" cy="301.6" r="1.15"/><circle cx="865.0" cy="301.6" r="1.15"/><circle cx="873.9" cy="301.6" r="1.15"/><circle cx="900.6" cy="301.6" r="1.15"/><circle cx="287.2" cy="292.4" r="1.15"/><circle cx="296.1" cy="292.4" r="1.15"/><circle cx="305.0" cy="292.4" r="1.15"/><circle cx="313.9" cy="292.4" r="1.15"/><circle cx="322.8" cy="292.4" r="1.15"/><circle cx="331.7" cy="292.4" r="1.15"/><circle cx="340.6" cy="292.4" r="1.15"/><circle cx="349.4" cy="292.4" r="1.15"/><circle cx="358.3" cy="292.4" r="1.15"/><circle cx="367.2" cy="292.4" r="1.15"/><circle cx="376.1" cy="292.4" r="1.15"/><circle cx="385.0" cy="292.4" r="1.15"/><circle cx="393.9" cy="292.4" r="1.15"/><circle cx="545.0" cy="292.4" r="1.15"/><circle cx="553.9" cy="292.4" r="1.15"/><circle cx="562.8" cy="292.4" r="1.15"/><circle cx="571.7" cy="292.4" r="1.15"/><circle cx="580.6" cy="292.4" r="1.15"/><circle cx="589.4" cy="292.4" r="1.15"/><circle cx="598.3" cy="292.4" r="1.15"/><circle cx="607.2" cy="292.4" r="1.15"/><circle cx="287.2" cy="283.1" r="1.15"/><circle cx="296.1" cy="283.1" r="1.15"/><circle cx="305.0" cy="283.1" r="1.15"/><circle cx="313.9" cy="283.1" r="1.15"/><circle cx="322.8" cy="283.1" r="1.15"/><circle cx="331.7" cy="283.1" r="1.15"/><circle cx="340.6" cy="283.1" r="1.15"/><circle cx="349.4" cy="283.1" r="1.15"/><circle cx="358.3" cy="283.1" r="1.15"/><circle cx="367.2" cy="283.1" r="1.15"/><circle cx="376.1" cy="283.1" r="1.15"/><circle cx="385.0" cy="283.1" r="1.15"/><circle cx="393.9" cy="283.1" r="1.15"/><circle cx="402.8" cy="283.1" r="1.15"/><circle cx="545.0" cy="283.1" r="1.15"/><circle cx="553.9" cy="283.1" r="1.15"/><circle cx="562.8" cy="283.1" r="1.15"/><circle cx="571.7" cy="283.1" r="1.15"/><circle cx="580.6" cy="283.1" r="1.15"/><circle cx="589.4" cy="283.1" r="1.15"/><circle cx="598.3" cy="283.1" r="1.15"/><circle cx="607.2" cy="283.1" r="1.15"/><circle cx="811.7" cy="283.1" r="1.15"/><circle cx="891.7" cy="283.1" r="1.15"/><circle cx="909.4" cy="283.1" r="1.15"/><circle cx="936.1" cy="283.1" r="1.15"/><circle cx="278.3" cy="273.9" r="1.15"/><circle cx="287.2" cy="273.9" r="1.15"/><circle cx="296.1" cy="273.9" r="1.15"/><circle cx="305.0" cy="273.9" r="1.15"/><circle cx="313.9" cy="273.9" r="1.15"/><circle cx="322.8" cy="273.9" r="1.15"/><circle cx="331.7" cy="273.9" r="1.15"/><circle cx="340.6" cy="273.9" r="1.15"/><circle cx="349.4" cy="273.9" r="1.15"/><circle cx="358.3" cy="273.9" r="1.15"/><circle cx="367.2" cy="273.9" r="1.15"/><circle cx="376.1" cy="273.9" r="1.15"/><circle cx="385.0" cy="273.9" r="1.15"/><circle cx="393.9" cy="273.9" r="1.15"/><circle cx="536.1" cy="273.9" r="1.15"/><circle cx="545.0" cy="273.9" r="1.15"/><circle cx="553.9" cy="273.9" r="1.15"/><circle cx="562.8" cy="273.9" r="1.15"/><circle cx="571.7" cy="273.9" r="1.15"/><circle cx="580.6" cy="273.9" r="1.15"/><circle cx="589.4" cy="273.9" r="1.15"/><circle cx="598.3" cy="273.9" r="1.15"/><circle cx="607.2" cy="273.9" r="1.15"/><circle cx="793.9" cy="273.9" r="1.15"/><circle cx="838.3" cy="273.9" r="1.15"/><circle cx="882.8" cy="273.9" r="1.15"/><circle cx="891.7" cy="273.9" r="1.15"/><circle cx="900.6" cy="273.9" r="1.15"/><circle cx="278.3" cy="264.6" r="1.15"/><circle cx="287.2" cy="264.6" r="1.15"/><circle cx="296.1" cy="264.6" r="1.15"/><circle cx="305.0" cy="264.6" r="1.15"/><circle cx="313.9" cy="264.6" r="1.15"/><circle cx="322.8" cy="264.6" r="1.15"/><circle cx="331.7" cy="264.6" r="1.15"/><circle cx="340.6" cy="264.6" r="1.15"/><circle cx="349.4" cy="264.6" r="1.15"/><circle cx="358.3" cy="264.6" r="1.15"/><circle cx="367.2" cy="264.6" r="1.15"/><circle cx="527.2" cy="264.6" r="1.15"/><circle cx="536.1" cy="264.6" r="1.15"/><circle cx="545.0" cy="264.6" r="1.15"/><circle cx="553.9" cy="264.6" r="1.15"/><circle cx="562.8" cy="264.6" r="1.15"/><circle cx="571.7" cy="264.6" r="1.15"/><circle cx="580.6" cy="264.6" r="1.15"/><circle cx="589.4" cy="264.6" r="1.15"/><circle cx="598.3" cy="264.6" r="1.15"/><circle cx="607.2" cy="264.6" r="1.15"/><circle cx="785.0" cy="264.6" r="1.15"/><circle cx="793.9" cy="264.6" r="1.15"/><circle cx="811.7" cy="264.6" r="1.15"/><circle cx="820.6" cy="264.6" r="1.15"/><circle cx="838.3" cy="264.6" r="1.15"/><circle cx="882.8" cy="264.6" r="1.15"/><circle cx="287.2" cy="255.4" r="1.15"/><circle cx="296.1" cy="255.4" r="1.15"/><circle cx="305.0" cy="255.4" r="1.15"/><circle cx="313.9" cy="255.4" r="1.15"/><circle cx="322.8" cy="255.4" r="1.15"/><circle cx="331.7" cy="255.4" r="1.15"/><circle cx="340.6" cy="255.4" r="1.15"/><circle cx="349.4" cy="255.4" r="1.15"/><circle cx="358.3" cy="255.4" r="1.15"/><circle cx="527.2" cy="255.4" r="1.15"/><circle cx="536.1" cy="255.4" r="1.15"/><circle cx="545.0" cy="255.4" r="1.15"/><circle cx="553.9" cy="255.4" r="1.15"/><circle cx="562.8" cy="255.4" r="1.15"/><circle cx="571.7" cy="255.4" r="1.15"/><circle cx="580.6" cy="255.4" r="1.15"/><circle cx="589.4" cy="255.4" r="1.15"/><circle cx="598.3" cy="255.4" r="1.15"/><circle cx="607.2" cy="255.4" r="1.15"/><circle cx="616.1" cy="255.4" r="1.15"/><circle cx="776.1" cy="255.4" r="1.15"/><circle cx="811.7" cy="255.4" r="1.15"/><circle cx="820.6" cy="255.4" r="1.15"/><circle cx="847.2" cy="255.4" r="1.15"/><circle cx="287.2" cy="246.1" r="1.15"/><circle cx="296.1" cy="246.1" r="1.15"/><circle cx="305.0" cy="246.1" r="1.15"/><circle cx="313.9" cy="246.1" r="1.15"/><circle cx="322.8" cy="246.1" r="1.15"/><circle cx="331.7" cy="246.1" r="1.15"/><circle cx="340.6" cy="246.1" r="1.15"/><circle cx="349.4" cy="246.1" r="1.15"/><circle cx="518.3" cy="246.1" r="1.15"/><circle cx="527.2" cy="246.1" r="1.15"/><circle cx="536.1" cy="246.1" r="1.15"/><circle cx="545.0" cy="246.1" r="1.15"/><circle cx="553.9" cy="246.1" r="1.15"/><circle cx="562.8" cy="246.1" r="1.15"/><circle cx="571.7" cy="246.1" r="1.15"/><circle cx="580.6" cy="246.1" r="1.15"/><circle cx="589.4" cy="246.1" r="1.15"/><circle cx="598.3" cy="246.1" r="1.15"/><circle cx="607.2" cy="246.1" r="1.15"/><circle cx="616.1" cy="246.1" r="1.15"/><circle cx="625.0" cy="246.1" r="1.15"/><circle cx="767.2" cy="246.1" r="1.15"/><circle cx="785.0" cy="246.1" r="1.15"/><circle cx="820.6" cy="246.1" r="1.15"/><circle cx="287.2" cy="236.9" r="1.15"/><circle cx="296.1" cy="236.9" r="1.15"/><circle cx="305.0" cy="236.9" r="1.15"/><circle cx="313.9" cy="236.9" r="1.15"/><circle cx="322.8" cy="236.9" r="1.15"/><circle cx="331.7" cy="236.9" r="1.15"/><circle cx="465.0" cy="236.9" r="1.15"/><circle cx="473.9" cy="236.9" r="1.15"/><circle cx="482.8" cy="236.9" r="1.15"/><circle cx="491.7" cy="236.9" r="1.15"/><circle cx="500.6" cy="236.9" r="1.15"/><circle cx="509.4" cy="236.9" r="1.15"/><circle cx="518.3" cy="236.9" r="1.15"/><circle cx="527.2" cy="236.9" r="1.15"/><circle cx="536.1" cy="236.9" r="1.15"/><circle cx="545.0" cy="236.9" r="1.15"/><circle cx="553.9" cy="236.9" r="1.15"/><circle cx="562.8" cy="236.9" r="1.15"/><circle cx="571.7" cy="236.9" r="1.15"/><circle cx="580.6" cy="236.9" r="1.15"/><circle cx="589.4" cy="236.9" r="1.15"/><circle cx="598.3" cy="236.9" r="1.15"/><circle cx="607.2" cy="236.9" r="1.15"/><circle cx="616.1" cy="236.9" r="1.15"/><circle cx="625.0" cy="236.9" r="1.15"/><circle cx="633.9" cy="236.9" r="1.15"/><circle cx="722.8" cy="236.9" r="1.15"/><circle cx="776.1" cy="236.9" r="1.15"/><circle cx="847.2" cy="236.9" r="1.15"/><circle cx="296.1" cy="227.6" r="1.15"/><circle cx="305.0" cy="227.6" r="1.15"/><circle cx="465.0" cy="227.6" r="1.15"/><circle cx="473.9" cy="227.6" r="1.15"/><circle cx="482.8" cy="227.6" r="1.15"/><circle cx="491.7" cy="227.6" r="1.15"/><circle cx="500.6" cy="227.6" r="1.15"/><circle cx="509.4" cy="227.6" r="1.15"/><circle cx="518.3" cy="227.6" r="1.15"/><circle cx="527.2" cy="227.6" r="1.15"/><circle cx="536.1" cy="227.6" r="1.15"/><circle cx="545.0" cy="227.6" r="1.15"/><circle cx="553.9" cy="227.6" r="1.15"/><circle cx="562.8" cy="227.6" r="1.15"/><circle cx="571.7" cy="227.6" r="1.15"/><circle cx="580.6" cy="227.6" r="1.15"/><circle cx="589.4" cy="227.6" r="1.15"/><circle cx="598.3" cy="227.6" r="1.15"/><circle cx="607.2" cy="227.6" r="1.15"/><circle cx="616.1" cy="227.6" r="1.15"/><circle cx="633.9" cy="227.6" r="1.15"/><circle cx="713.9" cy="227.6" r="1.15"/><circle cx="776.1" cy="227.6" r="1.15"/><circle cx="793.9" cy="227.6" r="1.15"/><circle cx="847.2" cy="227.6" r="1.15"/><circle cx="251.7" cy="218.4" r="1.15"/><circle cx="260.6" cy="218.4" r="1.15"/><circle cx="456.1" cy="218.4" r="1.15"/><circle cx="465.0" cy="218.4" r="1.15"/><circle cx="473.9" cy="218.4" r="1.15"/><circle cx="482.8" cy="218.4" r="1.15"/><circle cx="491.7" cy="218.4" r="1.15"/><circle cx="500.6" cy="218.4" r="1.15"/><circle cx="509.4" cy="218.4" r="1.15"/><circle cx="518.3" cy="218.4" r="1.15"/><circle cx="527.2" cy="218.4" r="1.15"/><circle cx="536.1" cy="218.4" r="1.15"/><circle cx="545.0" cy="218.4" r="1.15"/><circle cx="553.9" cy="218.4" r="1.15"/><circle cx="562.8" cy="218.4" r="1.15"/><circle cx="571.7" cy="218.4" r="1.15"/><circle cx="580.6" cy="218.4" r="1.15"/><circle cx="589.4" cy="218.4" r="1.15"/><circle cx="598.3" cy="218.4" r="1.15"/><circle cx="607.2" cy="218.4" r="1.15"/><circle cx="625.0" cy="218.4" r="1.15"/><circle cx="633.9" cy="218.4" r="1.15"/><circle cx="713.9" cy="218.4" r="1.15"/><circle cx="776.1" cy="218.4" r="1.15"/><circle cx="785.0" cy="218.4" r="1.15"/><circle cx="793.9" cy="218.4" r="1.15"/><circle cx="802.8" cy="218.4" r="1.15"/><circle cx="225.0" cy="209.2" r="1.15"/><circle cx="233.9" cy="209.2" r="1.15"/><circle cx="242.8" cy="209.2" r="1.15"/><circle cx="251.7" cy="209.2" r="1.15"/><circle cx="456.1" cy="209.2" r="1.15"/><circle cx="465.0" cy="209.2" r="1.15"/><circle cx="473.9" cy="209.2" r="1.15"/><circle cx="482.8" cy="209.2" r="1.15"/><circle cx="491.7" cy="209.2" r="1.15"/><circle cx="500.6" cy="209.2" r="1.15"/><circle cx="509.4" cy="209.2" r="1.15"/><circle cx="518.3" cy="209.2" r="1.15"/><circle cx="527.2" cy="209.2" r="1.15"/><circle cx="536.1" cy="209.2" r="1.15"/><circle cx="545.0" cy="209.2" r="1.15"/><circle cx="553.9" cy="209.2" r="1.15"/><circle cx="562.8" cy="209.2" r="1.15"/><circle cx="571.7" cy="209.2" r="1.15"/><circle cx="580.6" cy="209.2" r="1.15"/><circle cx="589.4" cy="209.2" r="1.15"/><circle cx="598.3" cy="209.2" r="1.15"/><circle cx="607.2" cy="209.2" r="1.15"/><circle cx="625.0" cy="209.2" r="1.15"/><circle cx="633.9" cy="209.2" r="1.15"/><circle cx="642.8" cy="209.2" r="1.15"/><circle cx="651.7" cy="209.2" r="1.15"/><circle cx="705.0" cy="209.2" r="1.15"/><circle cx="713.9" cy="209.2" r="1.15"/><circle cx="722.8" cy="209.2" r="1.15"/><circle cx="767.2" cy="209.2" r="1.15"/><circle cx="776.1" cy="209.2" r="1.15"/><circle cx="785.0" cy="209.2" r="1.15"/><circle cx="793.9" cy="209.2" r="1.15"/><circle cx="838.3" cy="209.2" r="1.15"/><circle cx="207.2" cy="199.9" r="1.15"/><circle cx="216.1" cy="199.9" r="1.15"/><circle cx="225.0" cy="199.9" r="1.15"/><circle cx="251.7" cy="199.9" r="1.15"/><circle cx="287.2" cy="199.9" r="1.15"/><circle cx="456.1" cy="199.9" r="1.15"/><circle cx="465.0" cy="199.9" r="1.15"/><circle cx="473.9" cy="199.9" r="1.15"/><circle cx="482.8" cy="199.9" r="1.15"/><circle cx="491.7" cy="199.9" r="1.15"/><circle cx="500.6" cy="199.9" r="1.15"/><circle cx="509.4" cy="199.9" r="1.15"/><circle cx="518.3" cy="199.9" r="1.15"/><circle cx="527.2" cy="199.9" r="1.15"/><circle cx="536.1" cy="199.9" r="1.15"/><circle cx="545.0" cy="199.9" r="1.15"/><circle cx="553.9" cy="199.9" r="1.15"/><circle cx="562.8" cy="199.9" r="1.15"/><circle cx="571.7" cy="199.9" r="1.15"/><circle cx="580.6" cy="199.9" r="1.15"/><circle cx="589.4" cy="199.9" r="1.15"/><circle cx="598.3" cy="199.9" r="1.15"/><circle cx="616.1" cy="199.9" r="1.15"/><circle cx="625.0" cy="199.9" r="1.15"/><circle cx="633.9" cy="199.9" r="1.15"/><circle cx="642.8" cy="199.9" r="1.15"/><circle cx="651.7" cy="199.9" r="1.15"/><circle cx="660.6" cy="199.9" r="1.15"/><circle cx="696.1" cy="199.9" r="1.15"/><circle cx="705.0" cy="199.9" r="1.15"/><circle cx="713.9" cy="199.9" r="1.15"/><circle cx="722.8" cy="199.9" r="1.15"/><circle cx="731.7" cy="199.9" r="1.15"/><circle cx="740.6" cy="199.9" r="1.15"/><circle cx="758.3" cy="199.9" r="1.15"/><circle cx="767.2" cy="199.9" r="1.15"/><circle cx="776.1" cy="199.9" r="1.15"/><circle cx="785.0" cy="199.9" r="1.15"/><circle cx="793.9" cy="199.9" r="1.15"/><circle cx="207.2" cy="190.7" r="1.15"/><circle cx="216.1" cy="190.7" r="1.15"/><circle cx="225.0" cy="190.7" r="1.15"/><circle cx="465.0" cy="190.7" r="1.15"/><circle cx="473.9" cy="190.7" r="1.15"/><circle cx="482.8" cy="190.7" r="1.15"/><circle cx="491.7" cy="190.7" r="1.15"/><circle cx="500.6" cy="190.7" r="1.15"/><circle cx="509.4" cy="190.7" r="1.15"/><circle cx="518.3" cy="190.7" r="1.15"/><circle cx="527.2" cy="190.7" r="1.15"/><circle cx="536.1" cy="190.7" r="1.15"/><circle cx="545.0" cy="190.7" r="1.15"/><circle cx="553.9" cy="190.7" r="1.15"/><circle cx="562.8" cy="190.7" r="1.15"/><circle cx="571.7" cy="190.7" r="1.15"/><circle cx="580.6" cy="190.7" r="1.15"/><circle cx="589.4" cy="190.7" r="1.15"/><circle cx="598.3" cy="190.7" r="1.15"/><circle cx="607.2" cy="190.7" r="1.15"/><circle cx="616.1" cy="190.7" r="1.15"/><circle cx="625.0" cy="190.7" r="1.15"/><circle cx="633.9" cy="190.7" r="1.15"/><circle cx="642.8" cy="190.7" r="1.15"/><circle cx="651.7" cy="190.7" r="1.15"/><circle cx="696.1" cy="190.7" r="1.15"/><circle cx="705.0" cy="190.7" r="1.15"/><circle cx="713.9" cy="190.7" r="1.15"/><circle cx="722.8" cy="190.7" r="1.15"/><circle cx="731.7" cy="190.7" r="1.15"/><circle cx="740.6" cy="190.7" r="1.15"/><circle cx="749.4" cy="190.7" r="1.15"/><circle cx="758.3" cy="190.7" r="1.15"/><circle cx="767.2" cy="190.7" r="1.15"/><circle cx="776.1" cy="190.7" r="1.15"/><circle cx="785.0" cy="190.7" r="1.15"/><circle cx="793.9" cy="190.7" r="1.15"/><circle cx="802.8" cy="190.7" r="1.15"/><circle cx="811.7" cy="190.7" r="1.15"/><circle cx="820.6" cy="190.7" r="1.15"/><circle cx="198.3" cy="181.4" r="1.15"/><circle cx="207.2" cy="181.4" r="1.15"/><circle cx="216.1" cy="181.4" r="1.15"/><circle cx="225.0" cy="181.4" r="1.15"/><circle cx="465.0" cy="181.4" r="1.15"/><circle cx="473.9" cy="181.4" r="1.15"/><circle cx="482.8" cy="181.4" r="1.15"/><circle cx="491.7" cy="181.4" r="1.15"/><circle cx="500.6" cy="181.4" r="1.15"/><circle cx="509.4" cy="181.4" r="1.15"/><circle cx="518.3" cy="181.4" r="1.15"/><circle cx="527.2" cy="181.4" r="1.15"/><circle cx="536.1" cy="181.4" r="1.15"/><circle cx="545.0" cy="181.4" r="1.15"/><circle cx="553.9" cy="181.4" r="1.15"/><circle cx="562.8" cy="181.4" r="1.15"/><circle cx="571.7" cy="181.4" r="1.15"/><circle cx="580.6" cy="181.4" r="1.15"/><circle cx="589.4" cy="181.4" r="1.15"/><circle cx="607.2" cy="181.4" r="1.15"/><circle cx="616.1" cy="181.4" r="1.15"/><circle cx="625.0" cy="181.4" r="1.15"/><circle cx="633.9" cy="181.4" r="1.15"/><circle cx="651.7" cy="181.4" r="1.15"/><circle cx="660.6" cy="181.4" r="1.15"/><circle cx="669.4" cy="181.4" r="1.15"/><circle cx="678.3" cy="181.4" r="1.15"/><circle cx="687.2" cy="181.4" r="1.15"/><circle cx="696.1" cy="181.4" r="1.15"/><circle cx="705.0" cy="181.4" r="1.15"/><circle cx="713.9" cy="181.4" r="1.15"/><circle cx="722.8" cy="181.4" r="1.15"/><circle cx="731.7" cy="181.4" r="1.15"/><circle cx="740.6" cy="181.4" r="1.15"/><circle cx="749.4" cy="181.4" r="1.15"/><circle cx="758.3" cy="181.4" r="1.15"/><circle cx="767.2" cy="181.4" r="1.15"/><circle cx="776.1" cy="181.4" r="1.15"/><circle cx="785.0" cy="181.4" r="1.15"/><circle cx="793.9" cy="181.4" r="1.15"/><circle cx="802.8" cy="181.4" r="1.15"/><circle cx="811.7" cy="181.4" r="1.15"/><circle cx="820.6" cy="181.4" r="1.15"/><circle cx="829.4" cy="181.4" r="1.15"/><circle cx="180.6" cy="172.2" r="1.15"/><circle cx="189.4" cy="172.2" r="1.15"/><circle cx="198.3" cy="172.2" r="1.15"/><circle cx="207.2" cy="172.2" r="1.15"/><circle cx="216.1" cy="172.2" r="1.15"/><circle cx="225.0" cy="172.2" r="1.15"/><circle cx="233.9" cy="172.2" r="1.15"/><circle cx="242.8" cy="172.2" r="1.15"/><circle cx="251.7" cy="172.2" r="1.15"/><circle cx="260.6" cy="172.2" r="1.15"/><circle cx="269.4" cy="172.2" r="1.15"/><circle cx="473.9" cy="172.2" r="1.15"/><circle cx="482.8" cy="172.2" r="1.15"/><circle cx="491.7" cy="172.2" r="1.15"/><circle cx="500.6" cy="172.2" r="1.15"/><circle cx="509.4" cy="172.2" r="1.15"/><circle cx="518.3" cy="172.2" r="1.15"/><circle cx="527.2" cy="172.2" r="1.15"/><circle cx="536.1" cy="172.2" r="1.15"/><circle cx="545.0" cy="172.2" r="1.15"/><circle cx="562.8" cy="172.2" r="1.15"/><circle cx="571.7" cy="172.2" r="1.15"/><circle cx="580.6" cy="172.2" r="1.15"/><circle cx="589.4" cy="172.2" r="1.15"/><circle cx="598.3" cy="172.2" r="1.15"/><circle cx="607.2" cy="172.2" r="1.15"/><circle cx="616.1" cy="172.2" r="1.15"/><circle cx="625.0" cy="172.2" r="1.15"/><circle cx="633.9" cy="172.2" r="1.15"/><circle cx="642.8" cy="172.2" r="1.15"/><circle cx="651.7" cy="172.2" r="1.15"/><circle cx="660.6" cy="172.2" r="1.15"/><circle cx="669.4" cy="172.2" r="1.15"/><circle cx="678.3" cy="172.2" r="1.15"/><circle cx="687.2" cy="172.2" r="1.15"/><circle cx="696.1" cy="172.2" r="1.15"/><circle cx="705.0" cy="172.2" r="1.15"/><circle cx="713.9" cy="172.2" r="1.15"/><circle cx="722.8" cy="172.2" r="1.15"/><circle cx="731.7" cy="172.2" r="1.15"/><circle cx="740.6" cy="172.2" r="1.15"/><circle cx="749.4" cy="172.2" r="1.15"/><circle cx="758.3" cy="172.2" r="1.15"/><circle cx="767.2" cy="172.2" r="1.15"/><circle cx="776.1" cy="172.2" r="1.15"/><circle cx="785.0" cy="172.2" r="1.15"/><circle cx="793.9" cy="172.2" r="1.15"/><circle cx="802.8" cy="172.2" r="1.15"/><circle cx="811.7" cy="172.2" r="1.15"/><circle cx="820.6" cy="172.2" r="1.15"/><circle cx="829.4" cy="172.2" r="1.15"/><circle cx="180.6" cy="162.9" r="1.15"/><circle cx="189.4" cy="162.9" r="1.15"/><circle cx="198.3" cy="162.9" r="1.15"/><circle cx="207.2" cy="162.9" r="1.15"/><circle cx="216.1" cy="162.9" r="1.15"/><circle cx="225.0" cy="162.9" r="1.15"/><circle cx="233.9" cy="162.9" r="1.15"/><circle cx="242.8" cy="162.9" r="1.15"/><circle cx="251.7" cy="162.9" r="1.15"/><circle cx="260.6" cy="162.9" r="1.15"/><circle cx="269.4" cy="162.9" r="1.15"/><circle cx="278.3" cy="162.9" r="1.15"/><circle cx="482.8" cy="162.9" r="1.15"/><circle cx="491.7" cy="162.9" r="1.15"/><circle cx="500.6" cy="162.9" r="1.15"/><circle cx="509.4" cy="162.9" r="1.15"/><circle cx="518.3" cy="162.9" r="1.15"/><circle cx="527.2" cy="162.9" r="1.15"/><circle cx="598.3" cy="162.9" r="1.15"/><circle cx="607.2" cy="162.9" r="1.15"/><circle cx="616.1" cy="162.9" r="1.15"/><circle cx="625.0" cy="162.9" r="1.15"/><circle cx="633.9" cy="162.9" r="1.15"/><circle cx="642.8" cy="162.9" r="1.15"/><circle cx="651.7" cy="162.9" r="1.15"/><circle cx="660.6" cy="162.9" r="1.15"/><circle cx="669.4" cy="162.9" r="1.15"/><circle cx="678.3" cy="162.9" r="1.15"/><circle cx="687.2" cy="162.9" r="1.15"/><circle cx="696.1" cy="162.9" r="1.15"/><circle cx="705.0" cy="162.9" r="1.15"/><circle cx="713.9" cy="162.9" r="1.15"/><circle cx="722.8" cy="162.9" r="1.15"/><circle cx="731.7" cy="162.9" r="1.15"/><circle cx="740.6" cy="162.9" r="1.15"/><circle cx="749.4" cy="162.9" r="1.15"/><circle cx="758.3" cy="162.9" r="1.15"/><circle cx="767.2" cy="162.9" r="1.15"/><circle cx="776.1" cy="162.9" r="1.15"/><circle cx="785.0" cy="162.9" r="1.15"/><circle cx="793.9" cy="162.9" r="1.15"/><circle cx="802.8" cy="162.9" r="1.15"/><circle cx="811.7" cy="162.9" r="1.15"/><circle cx="820.6" cy="162.9" r="1.15"/><circle cx="829.4" cy="162.9" r="1.15"/><circle cx="162.8" cy="153.7" r="1.15"/><circle cx="171.7" cy="153.7" r="1.15"/><circle cx="180.6" cy="153.7" r="1.15"/><circle cx="189.4" cy="153.7" r="1.15"/><circle cx="198.3" cy="153.7" r="1.15"/><circle cx="207.2" cy="153.7" r="1.15"/><circle cx="216.1" cy="153.7" r="1.15"/><circle cx="225.0" cy="153.7" r="1.15"/><circle cx="233.9" cy="153.7" r="1.15"/><circle cx="242.8" cy="153.7" r="1.15"/><circle cx="251.7" cy="153.7" r="1.15"/><circle cx="260.6" cy="153.7" r="1.15"/><circle cx="269.4" cy="153.7" r="1.15"/><circle cx="278.3" cy="153.7" r="1.15"/><circle cx="287.2" cy="153.7" r="1.15"/><circle cx="482.8" cy="153.7" r="1.15"/><circle cx="491.7" cy="153.7" r="1.15"/><circle cx="518.3" cy="153.7" r="1.15"/><circle cx="527.2" cy="153.7" r="1.15"/><circle cx="562.8" cy="153.7" r="1.15"/><circle cx="571.7" cy="153.7" r="1.15"/><circle cx="580.6" cy="153.7" r="1.15"/><circle cx="589.4" cy="153.7" r="1.15"/><circle cx="598.3" cy="153.7" r="1.15"/><circle cx="607.2" cy="153.7" r="1.15"/><circle cx="616.1" cy="153.7" r="1.15"/><circle cx="625.0" cy="153.7" r="1.15"/><circle cx="633.9" cy="153.7" r="1.15"/><circle cx="651.7" cy="153.7" r="1.15"/><circle cx="660.6" cy="153.7" r="1.15"/><circle cx="669.4" cy="153.7" r="1.15"/><circle cx="678.3" cy="153.7" r="1.15"/><circle cx="687.2" cy="153.7" r="1.15"/><circle cx="696.1" cy="153.7" r="1.15"/><circle cx="705.0" cy="153.7" r="1.15"/><circle cx="713.9" cy="153.7" r="1.15"/><circle cx="722.8" cy="153.7" r="1.15"/><circle cx="731.7" cy="153.7" r="1.15"/><circle cx="740.6" cy="153.7" r="1.15"/><circle cx="749.4" cy="153.7" r="1.15"/><circle cx="758.3" cy="153.7" r="1.15"/><circle cx="767.2" cy="153.7" r="1.15"/><circle cx="776.1" cy="153.7" r="1.15"/><circle cx="785.0" cy="153.7" r="1.15"/><circle cx="793.9" cy="153.7" r="1.15"/><circle cx="802.8" cy="153.7" r="1.15"/><circle cx="811.7" cy="153.7" r="1.15"/><circle cx="820.6" cy="153.7" r="1.15"/><circle cx="829.4" cy="153.7" r="1.15"/><circle cx="856.1" cy="153.7" r="1.15"/><circle cx="882.8" cy="153.7" r="1.15"/><circle cx="162.8" cy="144.4" r="1.15"/><circle cx="171.7" cy="144.4" r="1.15"/><circle cx="180.6" cy="144.4" r="1.15"/><circle cx="189.4" cy="144.4" r="1.15"/><circle cx="198.3" cy="144.4" r="1.15"/><circle cx="207.2" cy="144.4" r="1.15"/><circle cx="216.1" cy="144.4" r="1.15"/><circle cx="225.0" cy="144.4" r="1.15"/><circle cx="233.9" cy="144.4" r="1.15"/><circle cx="242.8" cy="144.4" r="1.15"/><circle cx="251.7" cy="144.4" r="1.15"/><circle cx="260.6" cy="144.4" r="1.15"/><circle cx="269.4" cy="144.4" r="1.15"/><circle cx="278.3" cy="144.4" r="1.15"/><circle cx="287.2" cy="144.4" r="1.15"/><circle cx="482.8" cy="144.4" r="1.15"/><circle cx="491.7" cy="144.4" r="1.15"/><circle cx="545.0" cy="144.4" r="1.15"/><circle cx="562.8" cy="144.4" r="1.15"/><circle cx="580.6" cy="144.4" r="1.15"/><circle cx="589.4" cy="144.4" r="1.15"/><circle cx="598.3" cy="144.4" r="1.15"/><circle cx="607.2" cy="144.4" r="1.15"/><circle cx="616.1" cy="144.4" r="1.15"/><circle cx="625.0" cy="144.4" r="1.15"/><circle cx="633.9" cy="144.4" r="1.15"/><circle cx="651.7" cy="144.4" r="1.15"/><circle cx="660.6" cy="144.4" r="1.15"/><circle cx="669.4" cy="144.4" r="1.15"/><circle cx="678.3" cy="144.4" r="1.15"/><circle cx="687.2" cy="144.4" r="1.15"/><circle cx="696.1" cy="144.4" r="1.15"/><circle cx="705.0" cy="144.4" r="1.15"/><circle cx="713.9" cy="144.4" r="1.15"/><circle cx="722.8" cy="144.4" r="1.15"/><circle cx="731.7" cy="144.4" r="1.15"/><circle cx="740.6" cy="144.4" r="1.15"/><circle cx="749.4" cy="144.4" r="1.15"/><circle cx="758.3" cy="144.4" r="1.15"/><circle cx="767.2" cy="144.4" r="1.15"/><circle cx="776.1" cy="144.4" r="1.15"/><circle cx="785.0" cy="144.4" r="1.15"/><circle cx="793.9" cy="144.4" r="1.15"/><circle cx="802.8" cy="144.4" r="1.15"/><circle cx="811.7" cy="144.4" r="1.15"/><circle cx="820.6" cy="144.4" r="1.15"/><circle cx="829.4" cy="144.4" r="1.15"/><circle cx="847.2" cy="144.4" r="1.15"/><circle cx="891.7" cy="144.4" r="1.15"/><circle cx="162.8" cy="135.2" r="1.15"/><circle cx="171.7" cy="135.2" r="1.15"/><circle cx="180.6" cy="135.2" r="1.15"/><circle cx="189.4" cy="135.2" r="1.15"/><circle cx="198.3" cy="135.2" r="1.15"/><circle cx="207.2" cy="135.2" r="1.15"/><circle cx="216.1" cy="135.2" r="1.15"/><circle cx="225.0" cy="135.2" r="1.15"/><circle cx="233.9" cy="135.2" r="1.15"/><circle cx="242.8" cy="135.2" r="1.15"/><circle cx="251.7" cy="135.2" r="1.15"/><circle cx="260.6" cy="135.2" r="1.15"/><circle cx="269.4" cy="135.2" r="1.15"/><circle cx="278.3" cy="135.2" r="1.15"/><circle cx="287.2" cy="135.2" r="1.15"/><circle cx="296.1" cy="135.2" r="1.15"/><circle cx="482.8" cy="135.2" r="1.15"/><circle cx="491.7" cy="135.2" r="1.15"/><circle cx="500.6" cy="135.2" r="1.15"/><circle cx="536.1" cy="135.2" r="1.15"/><circle cx="553.9" cy="135.2" r="1.15"/><circle cx="562.8" cy="135.2" r="1.15"/><circle cx="571.7" cy="135.2" r="1.15"/><circle cx="616.1" cy="135.2" r="1.15"/><circle cx="625.0" cy="135.2" r="1.15"/><circle cx="642.8" cy="135.2" r="1.15"/><circle cx="651.7" cy="135.2" r="1.15"/><circle cx="660.6" cy="135.2" r="1.15"/><circle cx="669.4" cy="135.2" r="1.15"/><circle cx="678.3" cy="135.2" r="1.15"/><circle cx="687.2" cy="135.2" r="1.15"/><circle cx="696.1" cy="135.2" r="1.15"/><circle cx="705.0" cy="135.2" r="1.15"/><circle cx="713.9" cy="135.2" r="1.15"/><circle cx="722.8" cy="135.2" r="1.15"/><circle cx="731.7" cy="135.2" r="1.15"/><circle cx="740.6" cy="135.2" r="1.15"/><circle cx="749.4" cy="135.2" r="1.15"/><circle cx="758.3" cy="135.2" r="1.15"/><circle cx="767.2" cy="135.2" r="1.15"/><circle cx="776.1" cy="135.2" r="1.15"/><circle cx="785.0" cy="135.2" r="1.15"/><circle cx="793.9" cy="135.2" r="1.15"/><circle cx="802.8" cy="135.2" r="1.15"/><circle cx="811.7" cy="135.2" r="1.15"/><circle cx="820.6" cy="135.2" r="1.15"/><circle cx="829.4" cy="135.2" r="1.15"/><circle cx="838.3" cy="135.2" r="1.15"/><circle cx="847.2" cy="135.2" r="1.15"/><circle cx="856.1" cy="135.2" r="1.15"/><circle cx="865.0" cy="135.2" r="1.15"/><circle cx="900.6" cy="135.2" r="1.15"/><circle cx="162.8" cy="126.0" r="1.15"/><circle cx="171.7" cy="126.0" r="1.15"/><circle cx="180.6" cy="126.0" r="1.15"/><circle cx="189.4" cy="126.0" r="1.15"/><circle cx="198.3" cy="126.0" r="1.15"/><circle cx="207.2" cy="126.0" r="1.15"/><circle cx="216.1" cy="126.0" r="1.15"/><circle cx="225.0" cy="126.0" r="1.15"/><circle cx="233.9" cy="126.0" r="1.15"/><circle cx="242.8" cy="126.0" r="1.15"/><circle cx="251.7" cy="126.0" r="1.15"/><circle cx="260.6" cy="126.0" r="1.15"/><circle cx="269.4" cy="126.0" r="1.15"/><circle cx="278.3" cy="126.0" r="1.15"/><circle cx="287.2" cy="126.0" r="1.15"/><circle cx="296.1" cy="126.0" r="1.15"/><circle cx="305.0" cy="126.0" r="1.15"/><circle cx="313.9" cy="126.0" r="1.15"/><circle cx="331.7" cy="126.0" r="1.15"/><circle cx="500.6" cy="126.0" r="1.15"/><circle cx="509.4" cy="126.0" r="1.15"/><circle cx="518.3" cy="126.0" r="1.15"/><circle cx="527.2" cy="126.0" r="1.15"/><circle cx="536.1" cy="126.0" r="1.15"/><circle cx="545.0" cy="126.0" r="1.15"/><circle cx="553.9" cy="126.0" r="1.15"/><circle cx="562.8" cy="126.0" r="1.15"/><circle cx="571.7" cy="126.0" r="1.15"/><circle cx="580.6" cy="126.0" r="1.15"/><circle cx="589.4" cy="126.0" r="1.15"/><circle cx="598.3" cy="126.0" r="1.15"/><circle cx="607.2" cy="126.0" r="1.15"/><circle cx="616.1" cy="126.0" r="1.15"/><circle cx="625.0" cy="126.0" r="1.15"/><circle cx="633.9" cy="126.0" r="1.15"/><circle cx="651.7" cy="126.0" r="1.15"/><circle cx="660.6" cy="126.0" r="1.15"/><circle cx="669.4" cy="126.0" r="1.15"/><circle cx="678.3" cy="126.0" r="1.15"/><circle cx="687.2" cy="126.0" r="1.15"/><circle cx="696.1" cy="126.0" r="1.15"/><circle cx="705.0" cy="126.0" r="1.15"/><circle cx="713.9" cy="126.0" r="1.15"/><circle cx="722.8" cy="126.0" r="1.15"/><circle cx="731.7" cy="126.0" r="1.15"/><circle cx="740.6" cy="126.0" r="1.15"/><circle cx="749.4" cy="126.0" r="1.15"/><circle cx="758.3" cy="126.0" r="1.15"/><circle cx="767.2" cy="126.0" r="1.15"/><circle cx="776.1" cy="126.0" r="1.15"/><circle cx="785.0" cy="126.0" r="1.15"/><circle cx="793.9" cy="126.0" r="1.15"/><circle cx="802.8" cy="126.0" r="1.15"/><circle cx="811.7" cy="126.0" r="1.15"/><circle cx="820.6" cy="126.0" r="1.15"/><circle cx="829.4" cy="126.0" r="1.15"/><circle cx="838.3" cy="126.0" r="1.15"/><circle cx="847.2" cy="126.0" r="1.15"/><circle cx="856.1" cy="126.0" r="1.15"/><circle cx="865.0" cy="126.0" r="1.15"/><circle cx="873.9" cy="126.0" r="1.15"/><circle cx="882.8" cy="126.0" r="1.15"/><circle cx="162.8" cy="116.7" r="1.15"/><circle cx="171.7" cy="116.7" r="1.15"/><circle cx="180.6" cy="116.7" r="1.15"/><circle cx="189.4" cy="116.7" r="1.15"/><circle cx="198.3" cy="116.7" r="1.15"/><circle cx="207.2" cy="116.7" r="1.15"/><circle cx="216.1" cy="116.7" r="1.15"/><circle cx="225.0" cy="116.7" r="1.15"/><circle cx="233.9" cy="116.7" r="1.15"/><circle cx="242.8" cy="116.7" r="1.15"/><circle cx="251.7" cy="116.7" r="1.15"/><circle cx="260.6" cy="116.7" r="1.15"/><circle cx="269.4" cy="116.7" r="1.15"/><circle cx="278.3" cy="116.7" r="1.15"/><circle cx="287.2" cy="116.7" r="1.15"/><circle cx="296.1" cy="116.7" r="1.15"/><circle cx="305.0" cy="116.7" r="1.15"/><circle cx="340.6" cy="116.7" r="1.15"/><circle cx="500.6" cy="116.7" r="1.15"/><circle cx="509.4" cy="116.7" r="1.15"/><circle cx="518.3" cy="116.7" r="1.15"/><circle cx="527.2" cy="116.7" r="1.15"/><circle cx="536.1" cy="116.7" r="1.15"/><circle cx="545.0" cy="116.7" r="1.15"/><circle cx="553.9" cy="116.7" r="1.15"/><circle cx="562.8" cy="116.7" r="1.15"/><circle cx="571.7" cy="116.7" r="1.15"/><circle cx="580.6" cy="116.7" r="1.15"/><circle cx="589.4" cy="116.7" r="1.15"/><circle cx="598.3" cy="116.7" r="1.15"/><circle cx="607.2" cy="116.7" r="1.15"/><circle cx="616.1" cy="116.7" r="1.15"/><circle cx="625.0" cy="116.7" r="1.15"/><circle cx="633.9" cy="116.7" r="1.15"/><circle cx="642.8" cy="116.7" r="1.15"/><circle cx="651.7" cy="116.7" r="1.15"/><circle cx="660.6" cy="116.7" r="1.15"/><circle cx="669.4" cy="116.7" r="1.15"/><circle cx="678.3" cy="116.7" r="1.15"/><circle cx="687.2" cy="116.7" r="1.15"/><circle cx="696.1" cy="116.7" r="1.15"/><circle cx="705.0" cy="116.7" r="1.15"/><circle cx="713.9" cy="116.7" r="1.15"/><circle cx="722.8" cy="116.7" r="1.15"/><circle cx="731.7" cy="116.7" r="1.15"/><circle cx="740.6" cy="116.7" r="1.15"/><circle cx="749.4" cy="116.7" r="1.15"/><circle cx="758.3" cy="116.7" r="1.15"/><circle cx="767.2" cy="116.7" r="1.15"/><circle cx="776.1" cy="116.7" r="1.15"/><circle cx="785.0" cy="116.7" r="1.15"/><circle cx="793.9" cy="116.7" r="1.15"/><circle cx="802.8" cy="116.7" r="1.15"/><circle cx="811.7" cy="116.7" r="1.15"/><circle cx="820.6" cy="116.7" r="1.15"/><circle cx="829.4" cy="116.7" r="1.15"/><circle cx="838.3" cy="116.7" r="1.15"/><circle cx="847.2" cy="116.7" r="1.15"/><circle cx="856.1" cy="116.7" r="1.15"/><circle cx="865.0" cy="116.7" r="1.15"/><circle cx="873.9" cy="116.7" r="1.15"/><circle cx="882.8" cy="116.7" r="1.15"/><circle cx="145.0" cy="107.5" r="1.15"/><circle cx="153.9" cy="107.5" r="1.15"/><circle cx="162.8" cy="107.5" r="1.15"/><circle cx="171.7" cy="107.5" r="1.15"/><circle cx="180.6" cy="107.5" r="1.15"/><circle cx="189.4" cy="107.5" r="1.15"/><circle cx="198.3" cy="107.5" r="1.15"/><circle cx="207.2" cy="107.5" r="1.15"/><circle cx="216.1" cy="107.5" r="1.15"/><circle cx="225.0" cy="107.5" r="1.15"/><circle cx="233.9" cy="107.5" r="1.15"/><circle cx="242.8" cy="107.5" r="1.15"/><circle cx="251.7" cy="107.5" r="1.15"/><circle cx="260.6" cy="107.5" r="1.15"/><circle cx="269.4" cy="107.5" r="1.15"/><circle cx="287.2" cy="107.5" r="1.15"/><circle cx="296.1" cy="107.5" r="1.15"/><circle cx="305.0" cy="107.5" r="1.15"/><circle cx="313.9" cy="107.5" r="1.15"/><circle cx="322.8" cy="107.5" r="1.15"/><circle cx="331.7" cy="107.5" r="1.15"/><circle cx="340.6" cy="107.5" r="1.15"/><circle cx="473.9" cy="107.5" r="1.15"/><circle cx="482.8" cy="107.5" r="1.15"/><circle cx="491.7" cy="107.5" r="1.15"/><circle cx="500.6" cy="107.5" r="1.15"/><circle cx="518.3" cy="107.5" r="1.15"/><circle cx="527.2" cy="107.5" r="1.15"/><circle cx="536.1" cy="107.5" r="1.15"/><circle cx="545.0" cy="107.5" r="1.15"/><circle cx="553.9" cy="107.5" r="1.15"/><circle cx="562.8" cy="107.5" r="1.15"/><circle cx="571.7" cy="107.5" r="1.15"/><circle cx="580.6" cy="107.5" r="1.15"/><circle cx="589.4" cy="107.5" r="1.15"/><circle cx="598.3" cy="107.5" r="1.15"/><circle cx="607.2" cy="107.5" r="1.15"/><circle cx="616.1" cy="107.5" r="1.15"/><circle cx="625.0" cy="107.5" r="1.15"/><circle cx="633.9" cy="107.5" r="1.15"/><circle cx="642.8" cy="107.5" r="1.15"/><circle cx="651.7" cy="107.5" r="1.15"/><circle cx="660.6" cy="107.5" r="1.15"/><circle cx="669.4" cy="107.5" r="1.15"/><circle cx="678.3" cy="107.5" r="1.15"/><circle cx="687.2" cy="107.5" r="1.15"/><circle cx="696.1" cy="107.5" r="1.15"/><circle cx="705.0" cy="107.5" r="1.15"/><circle cx="713.9" cy="107.5" r="1.15"/><circle cx="722.8" cy="107.5" r="1.15"/><circle cx="731.7" cy="107.5" r="1.15"/><circle cx="740.6" cy="107.5" r="1.15"/><circle cx="749.4" cy="107.5" r="1.15"/><circle cx="758.3" cy="107.5" r="1.15"/><circle cx="767.2" cy="107.5" r="1.15"/><circle cx="776.1" cy="107.5" r="1.15"/><circle cx="785.0" cy="107.5" r="1.15"/><circle cx="793.9" cy="107.5" r="1.15"/><circle cx="802.8" cy="107.5" r="1.15"/><circle cx="811.7" cy="107.5" r="1.15"/><circle cx="820.6" cy="107.5" r="1.15"/><circle cx="829.4" cy="107.5" r="1.15"/><circle cx="838.3" cy="107.5" r="1.15"/><circle cx="847.2" cy="107.5" r="1.15"/><circle cx="856.1" cy="107.5" r="1.15"/><circle cx="865.0" cy="107.5" r="1.15"/><circle cx="873.9" cy="107.5" r="1.15"/><circle cx="882.8" cy="107.5" r="1.15"/><circle cx="891.7" cy="107.5" r="1.15"/><circle cx="936.1" cy="107.5" r="1.15"/><circle cx="980.6" cy="107.5" r="1.15"/><circle cx="56.1" cy="98.2" r="1.15"/><circle cx="136.1" cy="98.2" r="1.15"/><circle cx="145.0" cy="98.2" r="1.15"/><circle cx="153.9" cy="98.2" r="1.15"/><circle cx="162.8" cy="98.2" r="1.15"/><circle cx="171.7" cy="98.2" r="1.15"/><circle cx="180.6" cy="98.2" r="1.15"/><circle cx="189.4" cy="98.2" r="1.15"/><circle cx="198.3" cy="98.2" r="1.15"/><circle cx="207.2" cy="98.2" r="1.15"/><circle cx="216.1" cy="98.2" r="1.15"/><circle cx="225.0" cy="98.2" r="1.15"/><circle cx="233.9" cy="98.2" r="1.15"/><circle cx="242.8" cy="98.2" r="1.15"/><circle cx="251.7" cy="98.2" r="1.15"/><circle cx="278.3" cy="98.2" r="1.15"/><circle cx="287.2" cy="98.2" r="1.15"/><circle cx="296.1" cy="98.2" r="1.15"/><circle cx="305.0" cy="98.2" r="1.15"/><circle cx="313.9" cy="98.2" r="1.15"/><circle cx="322.8" cy="98.2" r="1.15"/><circle cx="527.2" cy="98.2" r="1.15"/><circle cx="536.1" cy="98.2" r="1.15"/><circle cx="562.8" cy="98.2" r="1.15"/><circle cx="571.7" cy="98.2" r="1.15"/><circle cx="580.6" cy="98.2" r="1.15"/><circle cx="589.4" cy="98.2" r="1.15"/><circle cx="598.3" cy="98.2" r="1.15"/><circle cx="607.2" cy="98.2" r="1.15"/><circle cx="616.1" cy="98.2" r="1.15"/><circle cx="625.0" cy="98.2" r="1.15"/><circle cx="633.9" cy="98.2" r="1.15"/><circle cx="642.8" cy="98.2" r="1.15"/><circle cx="651.7" cy="98.2" r="1.15"/><circle cx="660.6" cy="98.2" r="1.15"/><circle cx="669.4" cy="98.2" r="1.15"/><circle cx="678.3" cy="98.2" r="1.15"/><circle cx="687.2" cy="98.2" r="1.15"/><circle cx="696.1" cy="98.2" r="1.15"/><circle cx="705.0" cy="98.2" r="1.15"/><circle cx="713.9" cy="98.2" r="1.15"/><circle cx="722.8" cy="98.2" r="1.15"/><circle cx="731.7" cy="98.2" r="1.15"/><circle cx="740.6" cy="98.2" r="1.15"/><circle cx="749.4" cy="98.2" r="1.15"/><circle cx="758.3" cy="98.2" r="1.15"/><circle cx="767.2" cy="98.2" r="1.15"/><circle cx="776.1" cy="98.2" r="1.15"/><circle cx="785.0" cy="98.2" r="1.15"/><circle cx="793.9" cy="98.2" r="1.15"/><circle cx="802.8" cy="98.2" r="1.15"/><circle cx="811.7" cy="98.2" r="1.15"/><circle cx="820.6" cy="98.2" r="1.15"/><circle cx="829.4" cy="98.2" r="1.15"/><circle cx="838.3" cy="98.2" r="1.15"/><circle cx="847.2" cy="98.2" r="1.15"/><circle cx="856.1" cy="98.2" r="1.15"/><circle cx="865.0" cy="98.2" r="1.15"/><circle cx="873.9" cy="98.2" r="1.15"/><circle cx="936.1" cy="98.2" r="1.15"/><circle cx="945.0" cy="98.2" r="1.15"/><circle cx="56.1" cy="89.0" r="1.15"/><circle cx="65.0" cy="89.0" r="1.15"/><circle cx="118.3" cy="89.0" r="1.15"/><circle cx="127.2" cy="89.0" r="1.15"/><circle cx="136.1" cy="89.0" r="1.15"/><circle cx="145.0" cy="89.0" r="1.15"/><circle cx="153.9" cy="89.0" r="1.15"/><circle cx="162.8" cy="89.0" r="1.15"/><circle cx="171.7" cy="89.0" r="1.15"/><circle cx="180.6" cy="89.0" r="1.15"/><circle cx="189.4" cy="89.0" r="1.15"/><circle cx="198.3" cy="89.0" r="1.15"/><circle cx="207.2" cy="89.0" r="1.15"/><circle cx="216.1" cy="89.0" r="1.15"/><circle cx="225.0" cy="89.0" r="1.15"/><circle cx="233.9" cy="89.0" r="1.15"/><circle cx="287.2" cy="89.0" r="1.15"/><circle cx="296.1" cy="89.0" r="1.15"/><circle cx="305.0" cy="89.0" r="1.15"/><circle cx="322.8" cy="89.0" r="1.15"/><circle cx="518.3" cy="89.0" r="1.15"/><circle cx="527.2" cy="89.0" r="1.15"/><circle cx="536.1" cy="89.0" r="1.15"/><circle cx="545.0" cy="89.0" r="1.15"/><circle cx="571.7" cy="89.0" r="1.15"/><circle cx="580.6" cy="89.0" r="1.15"/><circle cx="589.4" cy="89.0" r="1.15"/><circle cx="598.3" cy="89.0" r="1.15"/><circle cx="607.2" cy="89.0" r="1.15"/><circle cx="616.1" cy="89.0" r="1.15"/><circle cx="625.0" cy="89.0" r="1.15"/><circle cx="633.9" cy="89.0" r="1.15"/><circle cx="642.8" cy="89.0" r="1.15"/><circle cx="651.7" cy="89.0" r="1.15"/><circle cx="660.6" cy="89.0" r="1.15"/><circle cx="669.4" cy="89.0" r="1.15"/><circle cx="678.3" cy="89.0" r="1.15"/><circle cx="687.2" cy="89.0" r="1.15"/><circle cx="696.1" cy="89.0" r="1.15"/><circle cx="705.0" cy="89.0" r="1.15"/><circle cx="713.9" cy="89.0" r="1.15"/><circle cx="722.8" cy="89.0" r="1.15"/><circle cx="731.7" cy="89.0" r="1.15"/><circle cx="740.6" cy="89.0" r="1.15"/><circle cx="749.4" cy="89.0" r="1.15"/><circle cx="758.3" cy="89.0" r="1.15"/><circle cx="767.2" cy="89.0" r="1.15"/><circle cx="776.1" cy="89.0" r="1.15"/><circle cx="785.0" cy="89.0" r="1.15"/><circle cx="793.9" cy="89.0" r="1.15"/><circle cx="802.8" cy="89.0" r="1.15"/><circle cx="811.7" cy="89.0" r="1.15"/><circle cx="820.6" cy="89.0" r="1.15"/><circle cx="829.4" cy="89.0" r="1.15"/><circle cx="838.3" cy="89.0" r="1.15"/><circle cx="847.2" cy="89.0" r="1.15"/><circle cx="856.1" cy="89.0" r="1.15"/><circle cx="865.0" cy="89.0" r="1.15"/><circle cx="873.9" cy="89.0" r="1.15"/><circle cx="882.8" cy="89.0" r="1.15"/><circle cx="891.7" cy="89.0" r="1.15"/><circle cx="927.2" cy="89.0" r="1.15"/><circle cx="945.0" cy="89.0" r="1.15"/><circle cx="47.2" cy="79.7" r="1.15"/><circle cx="56.1" cy="79.7" r="1.15"/><circle cx="65.0" cy="79.7" r="1.15"/><circle cx="73.9" cy="79.7" r="1.15"/><circle cx="82.8" cy="79.7" r="1.15"/><circle cx="91.7" cy="79.7" r="1.15"/><circle cx="100.6" cy="79.7" r="1.15"/><circle cx="109.4" cy="79.7" r="1.15"/><circle cx="118.3" cy="79.7" r="1.15"/><circle cx="127.2" cy="79.7" r="1.15"/><circle cx="136.1" cy="79.7" r="1.15"/><circle cx="145.0" cy="79.7" r="1.15"/><circle cx="153.9" cy="79.7" r="1.15"/><circle cx="162.8" cy="79.7" r="1.15"/><circle cx="171.7" cy="79.7" r="1.15"/><circle cx="180.6" cy="79.7" r="1.15"/><circle cx="189.4" cy="79.7" r="1.15"/><circle cx="198.3" cy="79.7" r="1.15"/><circle cx="207.2" cy="79.7" r="1.15"/><circle cx="216.1" cy="79.7" r="1.15"/><circle cx="225.0" cy="79.7" r="1.15"/><circle cx="233.9" cy="79.7" r="1.15"/><circle cx="269.4" cy="79.7" r="1.15"/><circle cx="278.3" cy="79.7" r="1.15"/><circle cx="287.2" cy="79.7" r="1.15"/><circle cx="313.9" cy="79.7" r="1.15"/><circle cx="367.2" cy="79.7" r="1.15"/><circle cx="376.1" cy="79.7" r="1.15"/><circle cx="518.3" cy="79.7" r="1.15"/><circle cx="527.2" cy="79.7" r="1.15"/><circle cx="536.1" cy="79.7" r="1.15"/><circle cx="545.0" cy="79.7" r="1.15"/><circle cx="562.8" cy="79.7" r="1.15"/><circle cx="571.7" cy="79.7" r="1.15"/><circle cx="580.6" cy="79.7" r="1.15"/><circle cx="589.4" cy="79.7" r="1.15"/><circle cx="598.3" cy="79.7" r="1.15"/><circle cx="607.2" cy="79.7" r="1.15"/><circle cx="616.1" cy="79.7" r="1.15"/><circle cx="625.0" cy="79.7" r="1.15"/><circle cx="633.9" cy="79.7" r="1.15"/><circle cx="642.8" cy="79.7" r="1.15"/><circle cx="651.7" cy="79.7" r="1.15"/><circle cx="660.6" cy="79.7" r="1.15"/><circle cx="669.4" cy="79.7" r="1.15"/><circle cx="678.3" cy="79.7" r="1.15"/><circle cx="687.2" cy="79.7" r="1.15"/><circle cx="696.1" cy="79.7" r="1.15"/><circle cx="705.0" cy="79.7" r="1.15"/><circle cx="713.9" cy="79.7" r="1.15"/><circle cx="722.8" cy="79.7" r="1.15"/><circle cx="731.7" cy="79.7" r="1.15"/><circle cx="740.6" cy="79.7" r="1.15"/><circle cx="749.4" cy="79.7" r="1.15"/><circle cx="758.3" cy="79.7" r="1.15"/><circle cx="767.2" cy="79.7" r="1.15"/><circle cx="776.1" cy="79.7" r="1.15"/><circle cx="785.0" cy="79.7" r="1.15"/><circle cx="793.9" cy="79.7" r="1.15"/><circle cx="802.8" cy="79.7" r="1.15"/><circle cx="811.7" cy="79.7" r="1.15"/><circle cx="820.6" cy="79.7" r="1.15"/><circle cx="829.4" cy="79.7" r="1.15"/><circle cx="838.3" cy="79.7" r="1.15"/><circle cx="847.2" cy="79.7" r="1.15"/><circle cx="856.1" cy="79.7" r="1.15"/><circle cx="865.0" cy="79.7" r="1.15"/><circle cx="873.9" cy="79.7" r="1.15"/><circle cx="882.8" cy="79.7" r="1.15"/><circle cx="891.7" cy="79.7" r="1.15"/><circle cx="900.6" cy="79.7" r="1.15"/><circle cx="909.4" cy="79.7" r="1.15"/><circle cx="918.3" cy="79.7" r="1.15"/><circle cx="927.2" cy="79.7" r="1.15"/><circle cx="936.1" cy="79.7" r="1.15"/><circle cx="945.0" cy="79.7" r="1.15"/><circle cx="962.8" cy="79.7" r="1.15"/><circle cx="971.7" cy="79.7" r="1.15"/><circle cx="980.6" cy="79.7" r="1.15"/><circle cx="989.4" cy="79.7" r="1.15"/><circle cx="11.7" cy="70.5" r="1.15"/><circle cx="20.6" cy="70.5" r="1.15"/><circle cx="38.3" cy="70.5" r="1.15"/><circle cx="47.2" cy="70.5" r="1.15"/><circle cx="56.1" cy="70.5" r="1.15"/><circle cx="65.0" cy="70.5" r="1.15"/><circle cx="73.9" cy="70.5" r="1.15"/><circle cx="82.8" cy="70.5" r="1.15"/><circle cx="91.7" cy="70.5" r="1.15"/><circle cx="100.6" cy="70.5" r="1.15"/><circle cx="109.4" cy="70.5" r="1.15"/><circle cx="118.3" cy="70.5" r="1.15"/><circle cx="127.2" cy="70.5" r="1.15"/><circle cx="136.1" cy="70.5" r="1.15"/><circle cx="145.0" cy="70.5" r="1.15"/><circle cx="153.9" cy="70.5" r="1.15"/><circle cx="162.8" cy="70.5" r="1.15"/><circle cx="171.7" cy="70.5" r="1.15"/><circle cx="180.6" cy="70.5" r="1.15"/><circle cx="189.4" cy="70.5" r="1.15"/><circle cx="198.3" cy="70.5" r="1.15"/><circle cx="207.2" cy="70.5" r="1.15"/><circle cx="216.1" cy="70.5" r="1.15"/><circle cx="225.0" cy="70.5" r="1.15"/><circle cx="233.9" cy="70.5" r="1.15"/><circle cx="242.8" cy="70.5" r="1.15"/><circle cx="296.1" cy="70.5" r="1.15"/><circle cx="305.0" cy="70.5" r="1.15"/><circle cx="322.8" cy="70.5" r="1.15"/><circle cx="358.3" cy="70.5" r="1.15"/><circle cx="367.2" cy="70.5" r="1.15"/><circle cx="376.1" cy="70.5" r="1.15"/><circle cx="385.0" cy="70.5" r="1.15"/><circle cx="438.3" cy="70.5" r="1.15"/><circle cx="447.2" cy="70.5" r="1.15"/><circle cx="456.1" cy="70.5" r="1.15"/><circle cx="536.1" cy="70.5" r="1.15"/><circle cx="545.0" cy="70.5" r="1.15"/><circle cx="553.9" cy="70.5" r="1.15"/><circle cx="571.7" cy="70.5" r="1.15"/><circle cx="580.6" cy="70.5" r="1.15"/><circle cx="589.4" cy="70.5" r="1.15"/><circle cx="616.1" cy="70.5" r="1.15"/><circle cx="625.0" cy="70.5" r="1.15"/><circle cx="633.9" cy="70.5" r="1.15"/><circle cx="642.8" cy="70.5" r="1.15"/><circle cx="651.7" cy="70.5" r="1.15"/><circle cx="660.6" cy="70.5" r="1.15"/><circle cx="669.4" cy="70.5" r="1.15"/><circle cx="678.3" cy="70.5" r="1.15"/><circle cx="687.2" cy="70.5" r="1.15"/><circle cx="696.1" cy="70.5" r="1.15"/><circle cx="705.0" cy="70.5" r="1.15"/><circle cx="713.9" cy="70.5" r="1.15"/><circle cx="722.8" cy="70.5" r="1.15"/><circle cx="731.7" cy="70.5" r="1.15"/><circle cx="740.6" cy="70.5" r="1.15"/><circle cx="749.4" cy="70.5" r="1.15"/><circle cx="758.3" cy="70.5" r="1.15"/><circle cx="767.2" cy="70.5" r="1.15"/><circle cx="776.1" cy="70.5" r="1.15"/><circle cx="785.0" cy="70.5" r="1.15"/><circle cx="793.9" cy="70.5" r="1.15"/><circle cx="802.8" cy="70.5" r="1.15"/><circle cx="811.7" cy="70.5" r="1.15"/><circle cx="820.6" cy="70.5" r="1.15"/><circle cx="829.4" cy="70.5" r="1.15"/><circle cx="838.3" cy="70.5" r="1.15"/><circle cx="847.2" cy="70.5" r="1.15"/><circle cx="856.1" cy="70.5" r="1.15"/><circle cx="865.0" cy="70.5" r="1.15"/><circle cx="873.9" cy="70.5" r="1.15"/><circle cx="882.8" cy="70.5" r="1.15"/><circle cx="891.7" cy="70.5" r="1.15"/><circle cx="900.6" cy="70.5" r="1.15"/><circle cx="909.4" cy="70.5" r="1.15"/><circle cx="918.3" cy="70.5" r="1.15"/><circle cx="927.2" cy="70.5" r="1.15"/><circle cx="936.1" cy="70.5" r="1.15"/><circle cx="945.0" cy="70.5" r="1.15"/><circle cx="953.9" cy="70.5" r="1.15"/><circle cx="962.8" cy="70.5" r="1.15"/><circle cx="971.7" cy="70.5" r="1.15"/><circle cx="980.6" cy="70.5" r="1.15"/><circle cx="989.4" cy="70.5" r="1.15"/><circle cx="998.3" cy="70.5" r="1.15"/><circle cx="47.2" cy="61.2" r="1.15"/><circle cx="56.1" cy="61.2" r="1.15"/><circle cx="65.0" cy="61.2" r="1.15"/><circle cx="73.9" cy="61.2" r="1.15"/><circle cx="82.8" cy="61.2" r="1.15"/><circle cx="91.7" cy="61.2" r="1.15"/><circle cx="100.6" cy="61.2" r="1.15"/><circle cx="109.4" cy="61.2" r="1.15"/><circle cx="118.3" cy="61.2" r="1.15"/><circle cx="127.2" cy="61.2" r="1.15"/><circle cx="136.1" cy="61.2" r="1.15"/><circle cx="145.0" cy="61.2" r="1.15"/><circle cx="153.9" cy="61.2" r="1.15"/><circle cx="162.8" cy="61.2" r="1.15"/><circle cx="171.7" cy="61.2" r="1.15"/><circle cx="180.6" cy="61.2" r="1.15"/><circle cx="189.4" cy="61.2" r="1.15"/><circle cx="233.9" cy="61.2" r="1.15"/><circle cx="242.8" cy="61.2" r="1.15"/><circle cx="251.7" cy="61.2" r="1.15"/><circle cx="269.4" cy="61.2" r="1.15"/><circle cx="296.1" cy="61.2" r="1.15"/><circle cx="305.0" cy="61.2" r="1.15"/><circle cx="358.3" cy="61.2" r="1.15"/><circle cx="367.2" cy="61.2" r="1.15"/><circle cx="376.1" cy="61.2" r="1.15"/><circle cx="385.0" cy="61.2" r="1.15"/><circle cx="393.9" cy="61.2" r="1.15"/><circle cx="402.8" cy="61.2" r="1.15"/><circle cx="411.7" cy="61.2" r="1.15"/><circle cx="420.6" cy="61.2" r="1.15"/><circle cx="545.0" cy="61.2" r="1.15"/><circle cx="553.9" cy="61.2" r="1.15"/><circle cx="562.8" cy="61.2" r="1.15"/><circle cx="571.7" cy="61.2" r="1.15"/><circle cx="580.6" cy="61.2" r="1.15"/><circle cx="589.4" cy="61.2" r="1.15"/><circle cx="598.3" cy="61.2" r="1.15"/><circle cx="669.4" cy="61.2" r="1.15"/><circle cx="678.3" cy="61.2" r="1.15"/><circle cx="696.1" cy="61.2" r="1.15"/><circle cx="722.8" cy="61.2" r="1.15"/><circle cx="731.7" cy="61.2" r="1.15"/><circle cx="740.6" cy="61.2" r="1.15"/><circle cx="749.4" cy="61.2" r="1.15"/><circle cx="758.3" cy="61.2" r="1.15"/><circle cx="767.2" cy="61.2" r="1.15"/><circle cx="776.1" cy="61.2" r="1.15"/><circle cx="785.0" cy="61.2" r="1.15"/><circle cx="793.9" cy="61.2" r="1.15"/><circle cx="802.8" cy="61.2" r="1.15"/><circle cx="811.7" cy="61.2" r="1.15"/><circle cx="820.6" cy="61.2" r="1.15"/><circle cx="829.4" cy="61.2" r="1.15"/><circle cx="838.3" cy="61.2" r="1.15"/><circle cx="847.2" cy="61.2" r="1.15"/><circle cx="856.1" cy="61.2" r="1.15"/><circle cx="865.0" cy="61.2" r="1.15"/><circle cx="873.9" cy="61.2" r="1.15"/><circle cx="882.8" cy="61.2" r="1.15"/><circle cx="891.7" cy="61.2" r="1.15"/><circle cx="900.6" cy="61.2" r="1.15"/><circle cx="909.4" cy="61.2" r="1.15"/><circle cx="918.3" cy="61.2" r="1.15"/><circle cx="927.2" cy="61.2" r="1.15"/><circle cx="936.1" cy="61.2" r="1.15"/><circle cx="945.0" cy="61.2" r="1.15"/><circle cx="953.9" cy="61.2" r="1.15"/><circle cx="962.8" cy="61.2" r="1.15"/><circle cx="980.6" cy="61.2" r="1.15"/><circle cx="989.4" cy="61.2" r="1.15"/><circle cx="998.3" cy="61.2" r="1.15"/><circle cx="153.9" cy="52.0" r="1.15"/><circle cx="162.8" cy="52.0" r="1.15"/><circle cx="171.7" cy="52.0" r="1.15"/><circle cx="180.6" cy="52.0" r="1.15"/><circle cx="189.4" cy="52.0" r="1.15"/><circle cx="198.3" cy="52.0" r="1.15"/><circle cx="207.2" cy="52.0" r="1.15"/><circle cx="225.0" cy="52.0" r="1.15"/><circle cx="251.7" cy="52.0" r="1.15"/><circle cx="269.4" cy="52.0" r="1.15"/><circle cx="278.3" cy="52.0" r="1.15"/><circle cx="287.2" cy="52.0" r="1.15"/><circle cx="349.4" cy="52.0" r="1.15"/><circle cx="358.3" cy="52.0" r="1.15"/><circle cx="367.2" cy="52.0" r="1.15"/><circle cx="376.1" cy="52.0" r="1.15"/><circle cx="385.0" cy="52.0" r="1.15"/><circle cx="393.9" cy="52.0" r="1.15"/><circle cx="402.8" cy="52.0" r="1.15"/><circle cx="411.7" cy="52.0" r="1.15"/><circle cx="420.6" cy="52.0" r="1.15"/><circle cx="429.4" cy="52.0" r="1.15"/><circle cx="651.7" cy="52.0" r="1.15"/><circle cx="696.1" cy="52.0" r="1.15"/><circle cx="713.9" cy="52.0" r="1.15"/><circle cx="722.8" cy="52.0" r="1.15"/><circle cx="731.7" cy="52.0" r="1.15"/><circle cx="740.6" cy="52.0" r="1.15"/><circle cx="749.4" cy="52.0" r="1.15"/><circle cx="758.3" cy="52.0" r="1.15"/><circle cx="767.2" cy="52.0" r="1.15"/><circle cx="776.1" cy="52.0" r="1.15"/><circle cx="785.0" cy="52.0" r="1.15"/><circle cx="793.9" cy="52.0" r="1.15"/><circle cx="802.8" cy="52.0" r="1.15"/><circle cx="811.7" cy="52.0" r="1.15"/><circle cx="820.6" cy="52.0" r="1.15"/><circle cx="829.4" cy="52.0" r="1.15"/><circle cx="838.3" cy="52.0" r="1.15"/><circle cx="847.2" cy="52.0" r="1.15"/><circle cx="856.1" cy="52.0" r="1.15"/><circle cx="891.7" cy="52.0" r="1.15"/><circle cx="900.6" cy="52.0" r="1.15"/><circle cx="909.4" cy="52.0" r="1.15"/><circle cx="180.6" cy="42.8" r="1.15"/><circle cx="189.4" cy="42.8" r="1.15"/><circle cx="198.3" cy="42.8" r="1.15"/><circle cx="225.0" cy="42.8" r="1.15"/><circle cx="233.9" cy="42.8" r="1.15"/><circle cx="251.7" cy="42.8" r="1.15"/><circle cx="260.6" cy="42.8" r="1.15"/><circle cx="269.4" cy="42.8" r="1.15"/><circle cx="278.3" cy="42.8" r="1.15"/><circle cx="340.6" cy="42.8" r="1.15"/><circle cx="349.4" cy="42.8" r="1.15"/><circle cx="358.3" cy="42.8" r="1.15"/><circle cx="367.2" cy="42.8" r="1.15"/><circle cx="376.1" cy="42.8" r="1.15"/><circle cx="385.0" cy="42.8" r="1.15"/><circle cx="393.9" cy="42.8" r="1.15"/><circle cx="402.8" cy="42.8" r="1.15"/><circle cx="411.7" cy="42.8" r="1.15"/><circle cx="420.6" cy="42.8" r="1.15"/><circle cx="429.4" cy="42.8" r="1.15"/><circle cx="438.3" cy="42.8" r="1.15"/><circle cx="660.6" cy="42.8" r="1.15"/><circle cx="669.4" cy="42.8" r="1.15"/><circle cx="749.4" cy="42.8" r="1.15"/><circle cx="758.3" cy="42.8" r="1.15"/><circle cx="767.2" cy="42.8" r="1.15"/><circle cx="776.1" cy="42.8" r="1.15"/><circle cx="785.0" cy="42.8" r="1.15"/><circle cx="793.9" cy="42.8" r="1.15"/><circle cx="802.8" cy="42.8" r="1.15"/><circle cx="811.7" cy="42.8" r="1.15"/><circle cx="882.8" cy="42.8" r="1.15"/><circle cx="891.7" cy="42.8" r="1.15"/><circle cx="900.6" cy="42.8" r="1.15"/><circle cx="909.4" cy="42.8" r="1.15"/></g><g class="location-markers" fill="#ffffff"><g class="loc-marker loc-hq" style="--d:0.0s; --rpmax:30px;" transform="translate(176.4,144.4)"><title>Continuity Spire  -  Global Headquarters  -  Great Basin Desert, Nevada, USA</title><circle class="loc-ping" cx="0" cy="0" r="0"/><circle class="loc-dot" cx="0" cy="0" r="6"/></g><g class="loc-marker loc-hub" style="--d:0.06s; --rpmax:18px;" transform="translate(517.1,126.5)"><title>Policy Campus  -  Geneva, Switzerland  -  Regulatory & Diplomatic Office</title><circle class="loc-ping" cx="0" cy="0" r="0"/><rect class="loc-dot" x="-5.2" y="-5.2" width="10.4" height="10.4" transform="rotate(45)"/></g><g class="loc-marker loc-hub" style="--d:0.12s; --rpmax:18px;" transform="translate(788.5,256.1)"><title>Meridian Hub  -  Singapore  -  Asia-Pacific Manufacturing & Logistics</title><circle class="loc-ping" cx="0" cy="0" r="0"/><rect class="loc-dot" x="-5.2" y="-5.2" width="10.4" height="10.4" transform="rotate(45)"/></g><g class="loc-marker loc-hub" style="--d:0.18s; --rpmax:18px;" transform="translate(294.6,142.5)"><title>Prospect Point  -  Brooklyn, New York, USA  -  Flagship Continuity Community</title><circle class="loc-ping" cx="0" cy="0" r="0"/><rect class="loc-dot" x="-5.2" y="-5.2" width="10.4" height="10.4" transform="rotate(45)"/></g><g class="loc-marker loc-node" style="--d:0.24s; --rpmax:0px;" transform="translate(499.6,111.2)"><title>London Office  -  United Kingdom  -  European Financial Operations</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:0.3s; --rpmax:0px;" transform="translate(837.4,169.8)"><title>Shanghai Works  -  China  -  East Asia Manufacturing</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:0.36s; --rpmax:0px;" transform="translate(653.5,187.2)"><title>Dubai Terminal  -  United Arab Emirates  -  Middle East Distribution</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:0.42s; --rpmax:0px;" transform="translate(370.5,328.0)"><title>São Paulo Office  -  Brazil  -  South America Regional Office</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:0.48s; --rpmax:0px;" transform="translate(702.4,204.9)"><title>Mumbai Office  -  India  -  South Asia Assurance Operations</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:0.54s; --rpmax:0px;" transform="translate(279.5,133.9)"><title>Toronto Office  -  Canada  -  North America Assurance</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:0.6s; --rpmax:0px;" transform="translate(224.6,203.9)"><title>Mexico City Node  -  Mexico  -  Latin America Distribution</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:0.66s; --rpmax:0px;" transform="translate(294.2,246.4)"><title>Bogotá Node  -  Colombia  -  Andean Region Office</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:0.72s; --rpmax:0px;" transform="translate(303.7,356.6)"><title>Santiago Node  -  Chile  -  Southern Cone Office</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:0.78s; --rpmax:0px;" transform="translate(337.8,360.0)"><title>Buenos Aires Node  -  Argentina  -  Southern Cone Distribution</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:0.84s; --rpmax:0px;" transform="translate(509.4,241.2)"><title>Lagos Terminal  -  Nigeria  -  West Africa Materials</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:0.9s; --rpmax:0px;" transform="translate(586.8,173.2)"><title>Cairo Office  -  Egypt  -  North Africa Office</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:0.96s; --rpmax:0px;" transform="translate(577.9,335.7)"><title>Johannesburg Node  -  South Africa  -  Southern Africa Operations</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:1.02s; --rpmax:0px;" transform="translate(602.3,263.7)"><title>Nairobi Office  -  Kenya  -  Riftborn Integration Initiative</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:1.08s; --rpmax:0px;" transform="translate(580.5,141.5)"><title>Istanbul Node  -  Türkiye  -  Eurasia Distribution</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:1.14s; --rpmax:0px;" transform="translate(604.5,98.9)"><title>Moscow Office  -  Russia  -  Eastern Europe Operations</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:1.2s; --rpmax:0px;" transform="translate(558.4,109.1)"><title>Warsaw Node  -  Poland  -  Central Europe Office</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:1.26s; --rpmax:0px;" transform="translate(550.2,88.6)"><title>Stockholm Node  -  Sweden  -  Nordic Office</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:1.32s; --rpmax:0px;" transform="translate(545.5,120.7)"><title>Vienna Node  -  Austria  -  Central Europe Assurance</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:1.38s; --rpmax:0px;" transform="translate(489.7,143.2)"><title>Madrid Node  -  Spain  -  Iberian Office</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:1.44s; --rpmax:0px;" transform="translate(534.7,139.0)"><title>Rome Node  -  Italy  -  Southern Europe Office</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:1.5s; --rpmax:0px;" transform="translate(513.6,108.7)"><title>Amsterdam Node  -  Netherlands  -  Logistics Coordination</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:1.56s; --rpmax:0px;" transform="translate(523.7,123.2)"><title>Zurich Node  -  Switzerland  -  Financial Services</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:1.62s; --rpmax:0px;" transform="translate(888.0,156.9)"><title>Tokyo Flagship  -  Japan  -  Everyday Continuity Retail</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:1.68s; --rpmax:0px;" transform="translate(852.7,151.5)"><title>Seoul Node  -  South Korea  -  East Asia Office</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:1.74s; --rpmax:0px;" transform="translate(817.1,195.6)"><title>Hong Kong Node  -  China  -  Financial Services</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:1.8s; --rpmax:0px;" transform="translate(796.8,277.9)"><title>Jakarta Node  -  Indonesia  -  Southeast Asia Office</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:1.86s; --rpmax:0px;" transform="translate(779.2,220.3)"><title>Bangkok Node  -  Thailand  -  Southeast Asia Distribution</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:1.92s; --rpmax:0px;" transform="translate(836.1,217.8)"><title>Manila Node  -  Philippines  -  Pacific Distribution</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:1.98s; --rpmax:0px;" transform="translate(686.1,188.2)"><title>Karachi Node  -  Pakistan  -  South Asia Office</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:2.04s; --rpmax:0px;" transform="translate(642.7,156.9)"><title>Tehran Node  -  Iran  -  Regional Office</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:2.1s; --rpmax:0px;" transform="translate(629.7,188.6)"><title>Riyadh Node  -  Saudi Arabia  -  Gulf Region Office</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:2.16s; --rpmax:0px;" transform="translate(920.0,357.8)"><title>Sydney Office  -  Australia  -  Bedrock Initiative Engineering</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:2.22s; --rpmax:0px;" transform="translate(985.4,366.5)"><title>Auckland Node  -  New Zealand  -  Oceania Office</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:2.28s; --rpmax:0px;" transform="translate(439.1,74.7)"><title>Reykjavík Station  -  Iceland  -  Long-Duration Rift Monitoring</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:2.34s; --rpmax:0px;" transform="translate(83.6,83.1)"><title>Anchorage Plant  -  Alaska, USA  -  Filtration Manufacturing</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:2.4s; --rpmax:0px;" transform="translate(514.9,134.9)"><title>Marseille Facility  -  France  -  Shielding Systems</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:2.46s; --rpmax:0px;" transform="translate(844.2,230.2)"><title>Cebu Clinic  -  Philippines  -  Continuity Program Medical</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:2.52s; --rpmax:0px;" transform="translate(858.6,158.4)"><title>Busan Annex  -  South Korea  -  Logistics Support</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:2.58s; --rpmax:0px;" transform="translate(287.2,146.5)"><title>Baltimore Support  -  Maryland, USA  -  Containment Engineering</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:2.64s; --rpmax:0px;" transform="translate(585.4,125.7)"><title>Odessa Node  -  Ukraine  -  Regional Monitoring</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:2.7s; --rpmax:0px;" transform="translate(282.0,260.5)"><title>Quito Node  -  Ecuador  -  Andean Monitoring</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:2.76s; --rpmax:0px;" transform="translate(814.6,193.2)"><title>Guangzhou Node  -  China  -  Regional Monitoring</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:2.82s; --rpmax:0px;" transform="translate(712.5,161.8)"><title>Kashmir Monitor  -  Kashmir Exclusion Zone  -  Environmental Watch</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:2.88s; --rpmax:0px;" transform="translate(522.8,120.5)"><title>Black Forest Post  -  Germany  -  Black Forest Perimeter Watch</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:2.94s; --rpmax:0px;" transform="translate(194.4,148.8)"><title>Red Basin Outpost  -  USA  -  Red Basin Exclusion Watch</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:3.0s; --rpmax:0px;" transform="translate(860.4,80.8)"><title>Yakutsk Post  -  Russia  -  Yakutsk Exclusion Watch</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:3.06s; --rpmax:0px;" transform="translate(314.2,259.6)"><title>São Gabriel Post  -  Brazil  -  São Gabriel Zone Watch</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:3.12s; --rpmax:0px;" transform="translate(641.7,202.2)"><title>Empty Quarter Post  -  Saudi Arabia  -  Empty Quarter Site Watch</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:3.18s; --rpmax:0px;" transform="translate(896.8,135.6)"><title>Hokkaido Post  -  Japan  -  Hokkaido Perimeter Watch</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:3.24s; --rpmax:0px;" transform="translate(600.0,258.6)"><title>Great Rift Post  -  Kenya  -  Great Rift Quarantine Watch</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:3.3s; --rpmax:0px;" transform="translate(543.4,34.0)"><title>Svalbard Post  -  Norway  -  Svalbard Restricted Sector Watch</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:3.36s; --rpmax:0px;" transform="translate(838.6,333.1)"><title>Null Coast Post  -  Australia  -  Null Coast Watch</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g><g class="loc-marker loc-node" style="--d:3.42s; --rpmax:0px;" transform="translate(569.4,128.3)"><title>Făgăraș Post  -  Romania  -  Făgăraș Closure Watch</title><circle class="loc-dot" cx="0" cy="0" r="1.9"/></g></g></svg>
+                        <div class="absolute top-2 left-2 md:top-4 md:left-4 font-mono text-[0.55rem] md:text-[0.6rem] uppercase tracking-[0.15em] text-gray-600 flex items-center gap-2">
+                            <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                            Network Status: Live
+                        </div>
+                        <div class="absolute bottom-2 right-2 md:bottom-4 md:right-4 font-mono text-[0.55rem] md:text-[0.6rem] uppercase tracking-[0.15em] text-gray-600">
+                            63 Facility Nodes
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap justify-center gap-x-10 gap-y-3 mt-10 font-mono text-[0.6rem] uppercase tracking-[0.15em] text-gray-500 fade-in-up">
+                        <span class="flex items-center gap-2">
+                            <svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="#ffffff"/></svg>
+                            Headquarters
+                        </span>
+                        <span class="flex items-center gap-2">
+                            <svg width="14" height="14" viewBox="0 0 14 14"><rect x="3" y="3" width="8" height="8" fill="#ffffff" transform="rotate(45 7 7)"/></svg>
+                            Regional Holding
+                        </span>
+                        <span class="flex items-center gap-2">
+                            <svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="2" fill="#ffffff"/></svg>
+                            Facility Node
+                        </span>
+                    </div>
+                </div>
+            </section>
+
+            
+            <section class="py-24 px-6 md:px-16 lg:px-24 bg-[#020202] border-t border-gray-900 relative z-10">
+                <div class="max-w-6xl mx-auto">
+                    <h3 class="text-xs uppercase tracking-[0.3em] font-mono text-gray-500 mb-16 text-center">Two Decades of Continuity</h3>
+                    <div class="relative">
+                        <div class="hidden md:block absolute top-3 left-0 right-0 h-[1px] bg-gray-800"></div>
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-y-12 gap-x-6">
+                            <div class="fade-in-up relative pl-6 md:pl-0 md:text-center">
+                                <div class="w-2 h-2 rounded-full bg-white mb-4 md:mx-auto absolute md:relative left-0 top-1.5 md:top-0"></div>
+                                <h4 class="font-mono text-sm text-white mb-1">2012</h4>
+                                <p class="text-[0.7rem] text-gray-500 font-light leading-relaxed">Founded in the expertise vacuum left by the Culling.</p>
+                            </div>
+                            <div class="fade-in-up relative pl-6 md:pl-0 md:text-center" style="transition-delay: 80ms;">
+                                <div class="w-2 h-2 rounded-full bg-gray-600 mb-4 md:mx-auto absolute md:relative left-0 top-1.5 md:top-0"></div>
+                                <h4 class="font-mono text-sm text-white mb-1">2013–15</h4>
+                                <p class="text-[0.7rem] text-gray-500 font-light leading-relaxed">Filtration and shielding products prove themselves during the Cebu and Anchorage events.</p>
+                            </div>
+                            <div class="fade-in-up relative pl-6 md:pl-0 md:text-center" style="transition-delay: 160ms;">
+                                <div class="w-2 h-2 rounded-full bg-gray-600 mb-4 md:mx-auto absolute md:relative left-0 top-1.5 md:top-0"></div>
+                                <h4 class="font-mono text-sm text-white mb-1">2014</h4>
+                                <p class="text-[0.7rem] text-gray-500 font-light leading-relaxed">Prospect Point, our flagship Continuity Community, opens in Brooklyn.</p>
+                            </div>
+                            <div class="fade-in-up relative pl-6 md:pl-0 md:text-center" style="transition-delay: 240ms;">
+                                <div class="w-2 h-2 rounded-full bg-gray-600 mb-4 md:mx-auto absolute md:relative left-0 top-1.5 md:top-0"></div>
+                                <h4 class="font-mono text-sm text-white mb-1">2022</h4>
+                                <p class="text-[0.7rem] text-gray-500 font-light leading-relaxed">Providence infrastructure supports civilian recovery efforts through the Kashmir Rift Crisis.</p>
+                            </div>
+                            <div class="fade-in-up relative pl-6 md:pl-0 md:text-center" style="transition-delay: 320ms;">
+                                <div class="w-2 h-2 rounded-full bg-white mb-4 md:mx-auto absolute md:relative left-0 top-1.5 md:top-0"></div>
+                                <h4 class="font-mono text-sm text-white mb-1">Today</h4>
+                                <p class="text-[0.7rem] text-gray-500 font-light leading-relaxed">One of the two or three most valuable companies on Earth, in daily use by billions.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div id="page-divisions" class="page-section">
+            <section class="pt-40 pb-20 px-6 md:px-16 lg:px-24 bg-[#020202] border-b border-gray-900">
+                <div class="max-w-7xl mx-auto fade-in-up">
+                    <h3 class="text-[0.65rem] uppercase tracking-[0.3em] font-mono text-gray-500 mb-4">Corporate Structure</h3>
+                    <h1 class="text-5xl md:text-7xl font-sans font-light tracking-tight mb-6">Divisions & Holdings</h1>
+                    <p class="text-xl text-gray-400 font-light max-w-2xl">
+                        A multinational conglomerate deeply embedded in daily life, providing stability across sectors in the Rift Era.
+                    </p>
+                </div>
+            </section>
+
+            <section class="py-24 px-6 md:px-16 lg:px-24 bg-black">
+                <div class="max-w-7xl mx-auto space-y-32">
+                    
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                        <div class="fade-in-up order-2 lg:order-1">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-2 h-2 bg-white rounded-full"></div>
+                                <h3 class="text-xs uppercase tracking-[0.2em] font-mono text-gray-400">Retail & Infrastructure</h3>
+                            </div>
+                            <h2 class="text-3xl font-sans mb-6">Providence Consumer <br><span class="text-gray-500 text-2xl">& Materials Division</span></h2>
+                            <p class="text-gray-400 mb-6 leading-relaxed font-light">
+                                Our most public-facing arm. We refine raw Rift-derived substances into everyday commodities. The flagship <strong>Everyday Continuity</strong> line provides wellness supplements and home Rift-detection kits to billions.
+                            </p>
+                            <p class="text-gray-400 mb-8 leading-relaxed font-light">
+                                In parallel, the <strong>Bedrock Initiative</strong> handles industrial-scale extraction and licensing. We supply the structural shielding, specialized construction materials, and infrastructure engineering that governments rely on to fortify cities near active zones.
+                            </p>
+                        </div>
+                        <div class="fade-in-up scanline-img order-1 lg:order-2">
+                            <img src="https://images.unsplash.com/photo-iqCLy8kirpc?q=80&w=2000&auto=format&fit=crop" alt="Bedrock Initiative Infrastructure" class="w-full h-[400px] object-cover grayscale opacity-70 border border-gray-800">
+                            <div class="absolute bottom-4 left-4 bg-black/90 px-3 py-1 font-mono text-[0.55rem] text-white border border-gray-700 uppercase tracking-widest">
+                                Asset: Bedrock Shielding Deployment, Sector 4
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                        <div class="fade-in-up scanline-img">
+                            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Indonesian_police_setting_up_disaster_relief_tent.jpg?width=2000" alt="Continuity Program Clinic" class="w-full h-[400px] object-cover grayscale opacity-70 border border-gray-800">
+                            <div class="absolute top-4 right-4 bg-black/90 px-3 py-1 font-mono text-[0.55rem] text-white border border-gray-700 uppercase tracking-widest">
+                                Facility: Continuity Triage Center
+                            </div>
+                        </div>
+                        <div class="fade-in-up">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-2 h-2 bg-white rounded-full"></div>
+                                <h3 class="text-xs uppercase tracking-[0.2em] font-mono text-gray-400">Services & Medical</h3>
+                            </div>
+                            <h2 class="text-3xl font-sans mb-6">Providence Health <br><span class="text-gray-500 text-2xl">& Assurance</span></h2>
+                            <p class="text-gray-400 mb-6 leading-relaxed font-light">
+                                Providence Health runs the celebrated <strong>Continuity Program</strong>. When a Rift Event occurs, our emergency shelters, medical clinics, and evacuation centers are the first on the ground, securing our humanitarian reputation.
+                            </p>
+                            <p class="text-gray-400 mb-8 leading-relaxed font-light">
+                                Financial stability is maintained through <strong>Continuity Assurance</strong>, providing anomalous-exposure and disaster policies to hundreds of millions. Quietly, this division is also an extremely productive source for our global medical data access network.
+                            </p>
+                        </div>
+                    </div>
+
+                    
+                    <div class="pt-20 border-t border-gray-900">
+                        <h3 class="text-center text-xs uppercase tracking-[0.3em] font-mono text-gray-500 mb-16">Flagship Consumer Products</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            
+                            
+                            <div class="fade-in-up data-panel p-4 flex flex-col group cursor-default">
+                                <div class="w-full h-48 mb-4 scanline-img overflow-hidden border border-gray-800 group-hover:border-white transition-colors duration-300 relative">
+                                    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/NHGRI_researcher_uses_a_pipette_to_remove_DNA_from_a_micro_test_tube.jpg?width=2000" class="w-full h-full object-cover grayscale opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" alt="Supplements">
+                                    <div class="absolute top-2 right-2 bg-black/80 px-2 py-0.5 text-[0.55rem] font-mono text-white border border-gray-700">OTC Approved</div>
+                                </div>
+                                <h4 class="text-sm font-sans text-white mb-2 uppercase tracking-wide group-hover:text-gray-300">Everyday Continuity Supplements</h4>
+                                <p class="text-[0.65rem] text-gray-500 font-mono mt-auto">Counteracts trace anomalous radiation via micro-dosing. Available commercially.</p>
+                            </div>
+
+                            
+                            <div class="fade-in-up data-panel p-4 flex flex-col group cursor-default" style="transition-delay: 100ms;">
+                                <div class="w-full h-48 mb-4 scanline-img overflow-hidden border border-gray-800 group-hover:border-white transition-colors duration-300 relative">
+                                    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/NHGRI_researcher_uses_a_pipette_to_remove_DNA_from_a_micro_test_tube.jpg?width=2000" class="w-full h-full object-cover grayscale opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" alt="Home Detector">
+                                    <div class="absolute top-2 right-2 bg-black/80 px-2 py-0.5 text-[0.55rem] font-mono text-white border border-gray-700">Gen V</div>
+                                </div>
+                                <h4 class="text-sm font-sans text-white mb-2 uppercase tracking-wide group-hover:text-gray-300">Provi-Sense Home Scanner</h4>
+                                <p class="text-[0.65rem] text-gray-500 font-mono mt-auto">Early warning detection for localized spatial rifts and reality degradation.</p>
+                            </div>
+
+                            
+                            <div class="fade-in-up data-panel p-4 flex flex-col group cursor-default" style="transition-delay: 200ms;">
+                                <div class="w-full h-48 mb-4 scanline-img overflow-hidden border border-gray-800 group-hover:border-white transition-colors duration-300 relative">
+                                    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Refinery_Tanks_5.jpg?width=2000" class="w-full h-full object-cover grayscale opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" alt="Bedrock Plating">
+                                    <div class="absolute top-2 right-2 bg-black/80 px-2 py-0.5 text-[0.55rem] font-mono text-white border border-gray-700">Industrial</div>
+                                </div>
+                                <h4 class="text-sm font-sans text-white mb-2 uppercase tracking-wide group-hover:text-gray-300">Bedrock Structural Plating</h4>
+                                <p class="text-[0.65rem] text-gray-500 font-mono mt-auto">Heavy-duty anomalous kinetic shielding. Mandatory for Class-3 zone adjacent architecture.</p>
+                            </div>
+
+                            
+                            <div class="fade-in-up data-panel p-4 flex flex-col group cursor-default" style="transition-delay: 300ms;">
+                                <div class="w-full h-48 mb-4 scanline-img overflow-hidden border border-gray-800 group-hover:border-white transition-colors duration-300 relative">
+                                    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/NHGRI_researcher_uses_a_pipette_to_remove_DNA_from_a_micro_test_tube.jpg?width=2000" class="w-full h-full object-cover grayscale opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" alt="Neural Dampener">
+                                    <div class="absolute top-2 right-2 bg-black/80 px-2 py-0.5 text-[0.55rem] font-mono text-white border border-gray-700 text-red-400">Prescription Only</div>
+                                </div>
+                                <h4 class="text-sm font-sans text-white mb-2 uppercase tracking-wide group-hover:text-gray-300">Cognitive Dampener V2</h4>
+                                <p class="text-[0.65rem] text-gray-500 font-mono mt-auto">Protects against Class-2 memetic hazards and auditory hallucinations.</p>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    
+                    <div class="pt-24 border-t border-gray-900">
+                        <h3 class="text-center text-xs uppercase tracking-[0.3em] font-mono text-gray-500 mb-4">Corporate Structure</h3>
+                        <p class="text-center text-gray-500 font-light max-w-2xl mx-auto mb-16">Six divisions, each running its own flagship Programs and Initiatives.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="data-panel p-6 fade-in-up">
+                                <span class="font-mono text-[0.6rem] text-gray-600 uppercase tracking-widest">01</span>
+                                <h4 class="text-white font-sans text-lg my-2">Providence Consumer</h4>
+                                <p class="text-gray-500 text-sm font-light leading-relaxed">Retail wellness, detection, and filtration goods under the <strong class="text-gray-300 font-medium">Everyday Continuity</strong> brand.</p>
+                            </div>
+                            <div class="data-panel p-6 fade-in-up" style="transition-delay: 60ms;">
+                                <span class="font-mono text-[0.6rem] text-gray-600 uppercase tracking-widest">02</span>
+                                <h4 class="text-white font-sans text-lg my-2">Materials & Infrastructure</h4>
+                                <p class="text-gray-500 text-sm font-light leading-relaxed">Extraction, refinement, and licensing under the <strong class="text-gray-300 font-medium">Bedrock Initiative</strong>.</p>
+                            </div>
+                            <div class="data-panel p-6 fade-in-up" style="transition-delay: 120ms;">
+                                <span class="font-mono text-[0.6rem] text-gray-600 uppercase tracking-widest">03</span>
+                                <h4 class="text-white font-sans text-lg my-2">Providence Assurance</h4>
+                                <p class="text-gray-500 text-sm font-light leading-relaxed">Policies for hundreds of millions under <strong class="text-gray-300 font-medium">Continuity Assurance</strong>.</p>
+                            </div>
+                            <div class="data-panel p-6 fade-in-up" style="transition-delay: 180ms;">
+                                <span class="font-mono text-[0.6rem] text-gray-600 uppercase tracking-widest">04</span>
+                                <h4 class="text-white font-sans text-lg my-2">Providence Health</h4>
+                                <p class="text-gray-500 text-sm font-light leading-relaxed">Clinics and disaster medicine under our original, most celebrated program: <strong class="text-gray-300 font-medium">The Continuity Program</strong>.</p>
+                            </div>
+                            <div class="data-panel p-6 fade-in-up" style="transition-delay: 240ms;">
+                                <span class="font-mono text-[0.6rem] text-gray-600 uppercase tracking-widest">05</span>
+                                <h4 class="text-white font-sans text-lg my-2">Community Solutions</h4>
+                                <p class="text-gray-500 text-sm font-light leading-relaxed">Model townships built through <strong class="text-gray-300 font-medium">Project HOMESTEAD</strong>.</p>
+                            </div>
+                            <div class="data-panel p-6 fade-in-up" style="transition-delay: 300ms;">
+                                <span class="font-mono text-[0.6rem] text-gray-600 uppercase tracking-widest">06</span>
+                                <h4 class="text-white font-sans text-lg my-2">Applied Sciences</h4>
+                                <p class="text-gray-500 text-sm font-light leading-relaxed">Product-development R&D turning raw anomalous science into every other division's line.</p>
+                            </div>
+                        </div>
+                        <p class="text-center text-gray-600 font-mono text-[0.6rem] uppercase tracking-widest mt-10">
+                            Corporate & Government Affairs  -  Legal, lobbying, and regulatory compliance  -  supports every division above.
+                        </p>
+                    </div>
+
+                    
+                    <div class="pt-24 border-t border-gray-900">
+                        <h3 class="text-center text-xs uppercase tracking-[0.3em] font-mono text-gray-500 mb-16">Significant Assets</h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <div class="fade-in-up scanline-img h-64 relative border border-gray-800 group">
+                                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Indonesian_police_setting_up_disaster_relief_tent.jpg?width=2000" class="w-full h-full object-cover grayscale opacity-60 group-hover:opacity-100 transition-opacity duration-500" alt="Advanced Research Division">
+                                <div class="absolute bottom-0 left-0 w-full bg-black/90 p-5 border-t border-gray-800">
+                                    <h4 class="text-white font-mono text-xs uppercase tracking-widest mb-2">Advanced Research Division</h4>
+                                    <p class="text-gray-500 font-mono text-[0.65rem] leading-relaxed">Applied anomalous-materials science: the pipeline turning raw Rift-derived substances into patentable, sellable products.</p>
+                                </div>
+                            </div>
+                            <div class="fade-in-up scanline-img h-64 relative border border-gray-800 group" style="transition-delay: 100ms;">
+                                <img src="https://images.unsplash.com/photo-iqCLy8kirpc?q=80&w=2000&auto=format&fit=crop" class="w-full h-full object-cover grayscale opacity-60 group-hover:opacity-100 transition-opacity duration-500" alt="Advanced Engineering Division">
+                                <div class="absolute bottom-0 left-0 w-full bg-black/90 p-5 border-t border-gray-800">
+                                    <h4 class="text-white font-mono text-xs uppercase tracking-widest mb-2">Advanced Engineering Division</h4>
+                                    <p class="text-gray-500 font-mono text-[0.65rem] leading-relaxed">Manufacturing, fabrication, and large-scale infrastructure  -  the reason we can build entire Communities, not just filtration units.</p>
+                                </div>
+                            </div>
+                            <div class="fade-in-up scanline-img h-64 relative border border-gray-800 group" style="transition-delay: 200ms;">
+                                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Palace_of_Nations_Geneva_20102014_02.jpg?width=2000" class="w-full h-full object-cover grayscale opacity-60 group-hover:opacity-100 transition-opacity duration-500" alt="Public Relations Network">
+                                <div class="absolute bottom-0 left-0 w-full bg-black/90 p-5 border-t border-gray-800">
+                                    <h4 class="text-white font-mono text-xs uppercase tracking-widest mb-2">Public Relations Network</h4>
+                                    <p class="text-gray-500 font-mono text-[0.65rem] leading-relaxed">Decades of brand trust and crisis-management capability, built on the fact that our products genuinely work.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+        <div id="page-community" class="page-section">
+            <section class="h-[60vh] bg-black bg-grid-pattern bg-grid flex flex-col justify-center px-6 md:px-16 lg:px-24 border-b border-gray-900 mt-20 relative">
+                
+                <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, transparent 60%);"></div>
+                <div class="fade-in-up max-w-4xl relative z-10">
+                    <h3 class="text-[0.65rem] uppercase tracking-[0.3em] font-mono text-gray-400 mb-4">Providence Community Solutions</h3>
+                    <h1 class="text-5xl md:text-7xl font-sans font-light tracking-tight mb-6">Project HOMESTEAD</h1>
+                    <p class="text-xl text-gray-400 font-light max-w-2xl">
+                        Designing self-sustaining model townships for long-duration Rift coexistence.
+                    </p>
+                </div>
+            </section>
+
+            <section class="py-32 px-6 md:px-16 lg:px-24 bg-[#030303]">
+                <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16">
+                    
+                    <div class="lg:col-span-7 fade-in-up">
+                        <h2 class="text-3xl font-sans mb-6">The Esperança Continuity Community</h2>
+                        <p class="text-gray-400 mb-6 leading-relaxed font-light">
+                            Located along the perimeter of the São Gabriel Zone in Brazil, Esperança is our flagship model township. Sold publicly as a master-planned community offering absolute physical security and premium amenities, it attracts governments, corporations, and wealthy private clients willing to live adjacent to stabilized Rift perimeters.
+                        </p>
+                        <p class="text-gray-400 mb-8 leading-relaxed font-light">
+                            Through the integration of our highest-grade filtration systems and architectural shielding, residents enjoy a pristine lifestyle despite anomalous proximity. 
+                        </p>
+                        
+                        <div class="data-panel p-6 mb-12">
+                            <h4 class="font-mono text-xs text-white mb-4 uppercase tracking-widest border-b border-gray-800 pb-2">Riftborn Integration Initiative</h4>
+                            <p class="text-sm text-gray-400 font-light leading-relaxed">
+                                Our relocation, legal, and cultural-support program for displaced Riftborn, providing housing, employment pathways, and legal advocacy to those affected by Zone activity. Every household is invited  -  entirely optionally  -  to join the Continuity Wellness Panel, a standing check-in program that helps us track adaptation outcomes and refine support services for future arrivals.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-5 fade-in-up scanline-img h-[500px]">
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Palace_of_Nations_Geneva_20102014_02.jpg?width=2000" alt="Esperança Continuity Community" class="w-full h-full object-cover grayscale opacity-60 border border-gray-800">
+                        <div class="absolute top-4 left-4 right-4 flex justify-between items-start">
+                             <span class="bg-black/90 px-3 py-1 font-mono text-[0.55rem] text-white border border-gray-700 uppercase tracking-widest">
+                                Location: São Gabriel Zone
+                            </span>
+                            <span class="bg-black/90 px-3 py-1 font-mono text-[0.55rem] text-white border border-gray-700 uppercase tracking-widest flex items-center gap-2">
+                                <div class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+                                Active Monitoring
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+
+                
+                <div class="max-w-7xl mx-auto mt-24 border-t border-gray-900 pt-20">
+                    <h3 class="text-center text-xs uppercase tracking-[0.3em] font-mono text-gray-500 mb-12">Standardized Township Amenities</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="fade-in-up group overflow-hidden relative h-64 border border-gray-800">
+                            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Dalecarlia_Reservoir_Filtration_Tanks.jpg?width=2000" class="w-full h-full object-cover grayscale opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" alt="Atmospheric Filtering">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent flex flex-col justify-end p-5">
+                                <h4 class="text-white font-mono text-[0.7rem] tracking-widest uppercase mb-1">Atmospheric Towers</h4>
+                                <p class="text-[0.6rem] text-gray-400 font-sans">24/7 localized air purification</p>
+                            </div>
+                        </div>
+                        <div class="fade-in-up group overflow-hidden relative h-64 border border-gray-800" style="transition-delay: 100ms;">
+                            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Ifarm_inside_interior_New.jpg?width=2000" class="w-full h-full object-cover grayscale opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" alt="Hydroponics">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent flex flex-col justify-end p-5">
+                                <h4 class="text-white font-mono text-[0.7rem] tracking-widest uppercase mb-1">Hydroponic Sustenance</h4>
+                                <p class="text-[0.6rem] text-gray-400 font-sans">100% self-reliant food generation</p>
+                            </div>
+                        </div>
+                        <div class="fade-in-up group overflow-hidden relative h-64 border border-gray-800" style="transition-delay: 200ms;">
+                            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Indonesian_police_setting_up_disaster_relief_tent.jpg?width=2000" class="w-full h-full object-cover grayscale opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" alt="Integration Centers">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent flex flex-col justify-end p-5">
+                                <h4 class="text-white font-mono text-[0.7rem] tracking-widest uppercase mb-1">Integration Centers</h4>
+                                <p class="text-[0.6rem] text-gray-400 font-sans">Counseling & adaptation support</p>
+                            </div>
+                        </div>
+                        <div class="fade-in-up group overflow-hidden relative h-64 border border-gray-800" style="transition-delay: 300ms;">
+                            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Refinery_Tanks_5.jpg?width=2000" class="w-full h-full object-cover grayscale opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" alt="Perimeter Checkpoints">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent flex flex-col justify-end p-5">
+                                <h4 class="text-white font-mono text-[0.7rem] tracking-widest uppercase mb-1">Perimeter Checkpoints</h4>
+                                <p class="text-[0.6rem] text-gray-400 font-sans">Rigorous biological screening</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="max-w-7xl mx-auto mt-32 border-t border-gray-900 pt-20">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+                        <div class="lg:col-span-5 fade-in-up scanline-img h-[460px] order-1">
+                            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Brooklyn_View_from_Prospect_Park.JPG?width=2000" alt="Prospect Point Continuity Community, Brooklyn" class="w-full h-full object-cover grayscale opacity-60 border border-gray-800">
+                            <div class="absolute top-4 left-4 right-4 flex justify-between items-start">
+                                <span class="bg-black/90 px-3 py-1 font-mono text-[0.55rem] text-white border border-gray-700 uppercase tracking-widest">
+                                    Location: Brooklyn, NY
+                                </span>
+                                <span class="bg-black/90 px-3 py-1 font-mono text-[0.55rem] text-white border border-gray-700 uppercase tracking-widest flex items-center gap-2">
+                                    <div class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+                                    Flagship Site
+                                </span>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-7 fade-in-up order-2">
+                            <h3 class="text-xs uppercase tracking-[0.2em] font-mono text-gray-400 mb-4">Our Most Symbolic Address</h3>
+                            <h2 class="text-3xl font-sans mb-6">Prospect Point Continuity Community</h2>
+                            <p class="text-gray-400 mb-6 leading-relaxed font-light">
+                                Built adjacent to the original Prospect Park Rift site  -  ground zero of the 2007 Brooklyn Exposure  -  Prospect Point is the most photographed of our Continuity Communities, and the one we're proudest of. It stands as living proof that neighborhoods can not only survive the place that ended the Masquerade, but thrive beside it.
+                            </p>
+                            <p class="text-gray-400 mb-8 leading-relaxed font-light">
+                                The site doubles as our principal showcase for shielding, filtration, and materials products, and  -  quietly  -  as the most closely instrumented of all our residential campuses. Longitudinal resident data collected here, alongside the same optional wellness programs offered to every Continuity Community, informs the household products used by families everywhere.
+                            </p>
+                            <div class="flex gap-8 font-mono text-[0.65rem] uppercase tracking-widest text-gray-500">
+                                <div><span class="block text-white text-lg font-light mb-1">2014</span>Community Opened</div>
+                                <div><span class="block text-white text-lg font-light mb-1">100%</span>Occupancy Rate</div>
+                                <div><span class="block text-white text-lg font-light mb-1">24/7</span>Continuity Monitoring</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+
+        <div id="page-science" class="page-section">
+            <section class="h-[70vh] bg-lab-clean bg-cover bg-center bg-fixed flex flex-col justify-center px-6 md:px-16 lg:px-24 border-b border-gray-900 mt-20 relative">
+                <div class="absolute inset-0 bg-black/70"></div>
+                <div class="fade-in-up max-w-4xl relative z-10">
+                    <h3 class="text-[0.65rem] uppercase tracking-[0.3em] font-mono text-gray-400 mb-4 flex items-center gap-3">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        Applied Sciences Division
+                    </h3>
+                    <h1 class="text-5xl md:text-7xl font-sans font-light tracking-tight mb-6">Building Tomorrow's Standards.</h1>
+                    <p class="text-xl text-gray-300 font-light max-w-2xl border-l border-white pl-6">
+                        "Everyone else is trying to survive the Rift Era. We're the only ones building for the one after it."
+                    </p>
+                </div>
+            </section>
+
+            <section class="py-32 px-6 md:px-16 lg:px-24 bg-[#010101]">
+                <div class="max-w-7xl mx-auto">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-20">
+                        <div class="fade-in-up">
+                            <h2 class="text-2xl font-mono uppercase tracking-widest text-white mb-6 border-b border-gray-800 pb-4">What We Do</h2>
+                            <p class="text-gray-400 leading-relaxed font-light mb-6">
+                                Applied Sciences is Providence's research and development engine. It turns raw anomalous science into patentable, dependable products for every other division  -  from the shielding in a Bedrock contract to the supplement on a store shelf  -  and is publicly recognized for setting the industry benchmark on safe handling of Rift-derived materials.
+                            </p>
+                            <p class="text-gray-500 leading-relaxed font-light text-sm">
+                                Our research charter is reviewed annually by an independent standards board, and our long-term wellness studies  -  conducted in partnership with Continuity Assurance and Providence Health  -  help us understand how communities live safely alongside anomalous conditions over time.
+                            </p>
+                        </div>
+                        
+                        <div class="fade-in-up data-panel p-8 relative overflow-hidden" style="transition-delay: 100ms;">
+                            <div class="absolute inset-0 bg-grid-pattern bg-grid opacity-10"></div>
+                            <h2 class="text-2xl font-mono uppercase tracking-widest text-white mb-6 border-b border-gray-700 pb-4 relative z-10">Innovation Governance</h2>
+                            <p class="text-gray-300 leading-relaxed font-light mb-6 relative z-10">
+                                A dedicated internal steering group coordinates Applied Sciences' longest-horizon work, aligning priorities directly with founder and CEO Julian Ashworth's vision for the company's next chapter.
+                            </p>
+                            <p class="text-gray-400 leading-relaxed font-light text-sm relative z-10">
+                                This group works closely with Continuity Assurance, Providence Health, and Community Solutions to make sure the data behind our products and programs is put to the best possible use  -  for policyholders, patients, and residents alike.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="mt-24 grid grid-cols-1 lg:grid-cols-3 gap-8 border-t border-gray-900 pt-16">
+                        <div class="fade-in-up scanline-img h-80 relative border border-gray-800 group">
+                            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Refinery_Tanks_5.jpg?width=2000" class="w-full h-full object-cover grayscale opacity-70 group-hover:opacity-100 transition-opacity duration-500" alt="Reactor Core">
+                            <div class="absolute bottom-0 left-0 w-full bg-black/90 p-5 border-t border-gray-800">
+                                <h4 class="text-white font-mono text-xs uppercase tracking-widest mb-2">Site-44 Reactor Core</h4>
+                                <p class="text-gray-500 font-mono text-[0.65rem] leading-relaxed">Experimental anomalous energy siphoning. Located deep beneath Nevada HQ.</p>
+                            </div>
+                        </div>
+                        <div class="fade-in-up scanline-img h-80 relative border border-gray-800 group" style="transition-delay: 100ms;">
+                            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/NHGRI_researcher_uses_a_pipette_to_remove_DNA_from_a_micro_test_tube.jpg?width=2000" class="w-full h-full object-cover grayscale opacity-70 group-hover:opacity-100 transition-opacity duration-500" alt="Biometric Assimilation">
+                            <div class="absolute bottom-0 left-0 w-full bg-black/90 p-5 border-t border-gray-800">
+                                <h4 class="text-white font-mono text-xs uppercase tracking-widest mb-2">Biometric Assimilation</h4>
+                                <p class="text-gray-500 font-mono text-[0.65rem] leading-relaxed">Genetic splicing trials. Elevated clearance required to view raw data.</p>
+                            </div>
+                        </div>
+                        <div class="fade-in-up scanline-img h-80 relative border border-gray-800 group" style="transition-delay: 200ms;">
+                            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Refinery_Tanks_5.jpg?width=2000" class="w-full h-full object-cover grayscale opacity-70 group-hover:opacity-100 transition-opacity duration-500" alt="Containment Vessel">
+                            <div class="absolute top-4 right-4 bg-red-900/80 px-2 py-0.5 font-mono text-[0.55rem] text-red-200 border border-red-700 animate-pulse">RESTRICTED ACCESS</div>
+                            <div class="absolute bottom-0 left-0 w-full bg-black/90 p-5 border-t border-gray-800">
+                                <h4 class="text-white font-mono text-xs uppercase tracking-widest mb-2">Containment Vessel Beta</h4>
+                                <p class="text-gray-500 font-mono text-[0.65rem] leading-relaxed">Deep-storage for volatile Rift materials awaiting commercial processing.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+        <div id="page-leadership" class="page-section">
+            <section class="pt-40 pb-16 px-6 md:px-16 lg:px-24 bg-[#020202] border-b border-gray-900">
+                <div class="max-w-7xl mx-auto fade-in-up">
+                    <h3 class="text-[0.65rem] uppercase tracking-[0.3em] font-mono text-gray-500 mb-4">Executive Profile</h3>
+                    <h1 class="text-5xl md:text-7xl font-sans font-light tracking-tight mb-6">The Architect of Continuity</h1>
+                    <p class="text-xl text-gray-400 font-light max-w-2xl">
+                        One founder's conviction that the future of anomalous science would be built, sold, and lived in  -  not filed away.
+                    </p>
+                </div>
+            </section>
+
+            <section class="py-24 px-6 md:px-16 lg:px-24 bg-[#020202]">
+                <div class="max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+
+                    <div class="lg:col-span-5 fade-in-up">
+                        <div class="relative w-full aspect-[3/4] border border-dashed border-gray-700 bg-[#050505] flex flex-col items-center justify-center text-center p-8 group hover:border-gray-500 transition-colors duration-300">
+                            <svg class="w-10 h-10 text-gray-700 group-hover:text-gray-500 transition-colors mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M14 8h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <span class="font-mono text-[0.6rem] uppercase tracking-[0.3em] text-gray-600">Executive Portrait</span>
+                            <span class="font-mono text-[0.55rem] uppercase tracking-widest text-gray-700 mt-2">Pending Asset Upload</span>
+                            <div class="absolute bottom-4 left-4 bg-black/90 px-4 py-2 font-mono text-xs text-white border border-gray-700 uppercase tracking-widest z-10">
+                                Julian Ashworth
+                                <span class="block text-[0.6rem] text-gray-500 mt-1">Founder & CEO</span>
+                            </div>
+                        </div>
+
+                        <div class="data-panel p-6 mt-8">
+                            <h4 class="font-mono text-xs text-white mb-4 uppercase tracking-widest border-b border-gray-800 pb-3">At a Glance</h4>
+                            <ul class="space-y-4 mt-4">
+                                <li class="flex justify-between items-baseline text-sm">
+                                    <span class="text-gray-500 font-mono text-[0.65rem] uppercase tracking-widest">Title</span>
+                                    <span class="text-white font-light">Founder, Chairman & CEO</span>
+                                </li>
+                                <li class="flex justify-between items-baseline text-sm">
+                                    <span class="text-gray-500 font-mono text-[0.65rem] uppercase tracking-widest">Background</span>
+                                    <span class="text-white font-light">Ex-Commission Materials Science</span>
+                                </li>
+                                <li class="flex justify-between items-baseline text-sm">
+                                    <span class="text-gray-500 font-mono text-[0.65rem] uppercase tracking-widest">Tenure</span>
+                                    <span class="text-white font-light">2012  -  Present</span>
+                                </li>
+                                <li class="flex justify-between items-baseline text-sm">
+                                    <span class="text-gray-500 font-mono text-[0.65rem] uppercase tracking-widest">Reports To</span>
+                                    <span class="text-white font-light">Board of Directors</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="lg:col-span-7 fade-in-up">
+                        <div class="space-y-6 text-gray-300 font-light text-lg leading-relaxed">
+                            <p>
+                                A former Commission materials engineer, Julian Ashworth left the organization during the Culling, convinced that anomalous science's future was commercial, not classified. He saw that while governments contained and militaries weaponized, no one was selling the public solutions.
+                            </p>
+                            <p>
+                                Ashworth incorporated Providence in Nevada, building the Continuity Spire on cheap desert land far from regulatory scrutiny. Under his guidance, Providence grew from selling home detection kits into a trillion-dollar entity dictating global infrastructure.
+                            </p>
+                            <p class="text-gray-400 text-base border-l border-gray-800 pl-6 italic">
+                                "Everyone else is trying to survive the Rift Era. We're the only ones building for the one after it."
+                                <span class="block not-italic font-mono text-[0.6rem] uppercase tracking-widest text-gray-600 mt-3"> -  J. Ashworth, internal address, Applied Sciences kickoff</span>
+                            </p>
+                            
+                            <div class="data-panel p-6 mt-8">
+                                <h4 class="font-mono text-xs text-white mb-2 uppercase tracking-widest">Global Facilities Network</h4>
+                                <ul class="space-y-3 mt-4">
+                                    <li class="flex items-start gap-3 text-sm">
+                                        <div class="mt-1 w-1.5 h-1.5 bg-white rounded-full shrink-0"></div>
+                                        <div><strong class="text-white font-medium">The Continuity Spire, Nevada:</strong> HQ, applied-sciences labs, and manufacturing pilot lines.</div>
+                                    </li>
+                                    <li class="flex items-start gap-3 text-sm">
+                                        <div class="mt-1 w-1.5 h-1.5 bg-gray-500 rounded-full shrink-0"></div>
+                                        <div class="text-gray-400"><strong>Continuity Policy Campus, Geneva:</strong> Regulatory, diplomatic, and government-relations face.</div>
+                                    </li>
+                                    <li class="flex items-start gap-3 text-sm">
+                                        <div class="mt-1 w-1.5 h-1.5 bg-gray-500 rounded-full shrink-0"></div>
+                                        <div class="text-gray-400"><strong>Meridian Materials & Logistics Hub, Singapore:</strong> Asia-Pacific manufacturing, distribution, and financial-services center.</div>
+                                    </li>
+                                    <li class="flex items-start gap-3 text-sm">
+                                        <div class="mt-1 w-1.5 h-1.5 bg-gray-500 rounded-full shrink-0"></div>
+                                        <div class="text-gray-400"><strong>Prospect Point Continuity Community, Brooklyn:</strong> Flagship residential campus and public showcase site.</div>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4 mt-8">
+                                <div class="data-panel p-5">
+                                    <h4 class="font-mono text-[0.6rem] uppercase tracking-widest text-gray-500 mb-2">Applied Sciences Council</h4>
+                                    <p class="text-sm text-gray-400 font-light leading-relaxed">A small internal steering group advising Ashworth directly on the company's longest-horizon research priorities. Membership is not published.</p>
+                                </div>
+                                <div class="data-panel p-5">
+                                    <h4 class="font-mono text-[0.6rem] uppercase tracking-widest text-gray-500 mb-2">Board of Directors</h4>
+                                    <p class="text-sm text-gray-400 font-light leading-relaxed">Independent directors oversee corporate governance, audit, and shareholder relations. Full roster available in annual filings.</p>
+                                </div>
+                            </div>
+                            
+                            <p class="text-sm text-gray-500 mt-8 border-t border-gray-900 pt-8">
+                                Providence's reputation is maintained by the Corporate & Government Affairs division  -  decades of brand trust, retail presence, and crisis-management experience built on the simple fact that our products work. It's why governments and families alike have come to take Providence for granted.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            
+            <section class="py-24 px-6 md:px-16 lg:px-24 bg-[#010101] border-t border-gray-900">
+                <div class="max-w-7xl mx-auto">
+                    <h3 class="text-xs uppercase tracking-[0.3em] font-mono text-gray-500 mb-12 text-center">Global Holdings</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="fade-in-up scanline-img h-72 relative border border-gray-800 group">
+                            <img src="https://images.unsplash.com/photo-iqCLy8kirpc?q=80&w=2000&auto=format&fit=crop" class="w-full h-full object-cover grayscale opacity-60 group-hover:opacity-100 transition-opacity duration-500" alt="The Continuity Spire, Nevada">
+                            <div class="absolute bottom-0 left-0 w-full bg-black/90 p-5 border-t border-gray-800">
+                                <h4 class="text-white font-mono text-xs uppercase tracking-widest mb-1">The Continuity Spire</h4>
+                                <p class="text-gray-500 font-mono text-[0.65rem]">Great Basin Desert, Nevada  -  Global HQ</p>
+                            </div>
+                        </div>
+                        <div class="fade-in-up scanline-img h-72 relative border border-gray-800 group" style="transition-delay: 100ms;">
+                            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Palace_of_Nations_Geneva_20102014_02.jpg?width=2000" class="w-full h-full object-cover grayscale opacity-60 group-hover:opacity-100 transition-opacity duration-500" alt="Continuity Policy Campus, Geneva">
+                            <div class="absolute bottom-0 left-0 w-full bg-black/90 p-5 border-t border-gray-800">
+                                <h4 class="text-white font-mono text-xs uppercase tracking-widest mb-1">Continuity Policy Campus</h4>
+                                <p class="text-gray-500 font-mono text-[0.65rem]">Geneva, Switzerland  -  Regulatory & Diplomatic</p>
+                            </div>
+                        </div>
+                        <div class="fade-in-up scanline-img h-72 relative border border-gray-800 group" style="transition-delay: 200ms;">
+                            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Marina_Bay_Singapore-3499.jpg?width=2000" class="w-full h-full object-cover grayscale opacity-60 group-hover:opacity-100 transition-opacity duration-500" alt="Meridian Materials & Logistics Hub, Singapore">
+                            <div class="absolute bottom-0 left-0 w-full bg-black/90 p-5 border-t border-gray-800">
+                                <h4 class="text-white font-mono text-xs uppercase tracking-widest mb-1">Meridian Materials & Logistics Hub</h4>
+                                <p class="text-gray-500 font-mono text-[0.65rem]">Singapore  -  APAC Manufacturing & Finance</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <footer class="bg-[#030303] py-16 px-6 md:px-16 lg:px-24 border-t border-gray-900 text-sm relative z-20">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
+                <div class="lg:col-span-2">
+                    <div class="flex items-center gap-3 mb-6 opacity-80">
+                        <div class="w-6 h-6 relative">
+                            <svg viewBox="0 0 100 100" class="w-full h-full" style="fill: none; stroke: white; stroke-width: 3; stroke-linejoin: round;">
+                                <polygon points="15,40 25,35 25,45" fill="white"/>
+                                <polygon points="25,35 40,35 30,55" />
+                                <polygon points="40,35 50,30 30,55" />
+                                <polygon points="50,30 50,55 30,55" />
+                                <polygon points="50,30 75,35 50,55" />
+                                <polygon points="75,35 95,40 50,55" />
+                                <polygon points="30,55 50,55 60,75 40,90 40,65" fill="white"/>
+                            </svg>
+                        </div>
+                        <span class="font-mono font-bold tracking-[0.2em] uppercase text-white text-xs">Providence Continuity</span>
+                    </div>
+                    <p class="text-gray-500 mb-6 text-xs leading-relaxed font-mono">
+                        Global HQ: The Continuity Spire, Nevada, USA<br>
+                        European Ops: Policy Campus, Geneva<br>
+                        APAC Ops: Meridian Hub, Singapore
+                    </p>
+                </div>
+                
+                <div>
+                    <h5 class="text-gray-300 uppercase tracking-widest font-mono text-[0.65rem] mb-6">Divisions</h5>
+                    <ul class="space-y-3 text-gray-500 font-light text-[0.7rem] uppercase tracking-wider font-mono">
+                        <li><button onclick="navigateTo('divisions')" class="hover:text-white transition-colors">Consumer & Materials</button></li>
+                        <li><button onclick="navigateTo('divisions')" class="hover:text-white transition-colors">Health & Assurance</button></li>
+                        <li><button onclick="navigateTo('community')" class="hover:text-white transition-colors">Community Solutions</button></li>
+                        <li><button onclick="navigateTo('science')" class="hover:text-white transition-colors">Applied Sciences</button></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="text-gray-300 uppercase tracking-widest font-mono text-[0.65rem] mb-6">Resources</h5>
+                    <ul class="space-y-3 text-gray-500 font-light text-[0.7rem] uppercase tracking-wider font-mono">
+                        <li><a href="#" class="hover:text-white transition-colors">Everyday Continuity</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Bedrock Initiative</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Project HOMESTEAD</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Shareholder Portal</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="text-gray-300 uppercase tracking-widest font-mono text-[0.65rem] mb-6">Legal / FAQ</h5>
+                    <ul class="space-y-3 text-gray-600 text-[0.65rem] leading-relaxed">
+                        <li><a href="#" class="hover:text-white transition-colors">Terms of Relocation</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Assurance Privacy Policy</a></li>
+                        <li class="mt-4 pt-4 border-t border-gray-900 text-gray-600 font-mono text-[0.55rem] uppercase">
+                            Notice: Providence Continuity Corporation is entirely unaffiliated with "The Continuance".
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-gray-900 text-gray-600 text-[0.55rem] font-mono uppercase tracking-widest">
+                <p>&copy; 2026 Providence Continuity Corp. All rights reserved.</p>
+                <p class="mt-4 md:mt-0">PUBLIC_FACING_ASSET // CLEARANCE: ZERO</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/logo-3d.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -24,8 +24,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/styles.css?v=3">
     <script src="js/tailwind-config.js?v=2"></script>
+
+    <style>
+        @media (max-width: 1023px) {
+            .desktop-nav-links { display: none !important; }
+        }
+        @media (min-width: 1024px) {
+            .desktop-nav-links { display: flex !important; }
+        }
+        #mobile-menu { display: none; }
+        #mobile-menu.flex {
+            display: flex !important;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.97);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+        }
+    </style>
 
 </head>
 <body class="bg-black text-gray-200 antialiased selection:bg-white selection:text-black">

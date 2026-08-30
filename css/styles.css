@@ -3,6 +3,65 @@
             -webkit-font-smoothing: antialiased;
             background-color: #000000;
         }
+
+        
+        /* Mobile browsers (Safari/Chrome) resize their toolbar in and out of view,
+           which makes 100vh jump around and can clip content/buttons below the fold.
+           100dvh tracks the *actual* visible viewport, with 100vh as a safe fallback
+           for older browsers that don't support dvh at all. */
+        .hero-viewport {
+            height: 100vh;
+        }
+        @supports (height: 100dvh) {
+            .hero-viewport {
+                height: 100dvh;
+            }
+        }
+        .section-70vh {
+            height: 70vh;
+        }
+        @supports (height: 70dvh) {
+            .section-70vh {
+                height: 70dvh;
+            }
+        }
+
+        
+        /* background-attachment:fixed is unreliable on iOS Safari (images can fail
+           to paint at all inside elements that animate opacity, like our page
+           sections) and it's a well-known scroll-jank source on touch devices in
+           general, so parallax is disabled on mobile/touch in favor of a normal
+           scrolling background. */
+        @media (max-width: 1024px), (pointer: coarse) {
+            .bg-fixed {
+                background-attachment: scroll;
+            }
+        }
+
+        
+        /* Safari (incl. iOS) needs the -webkit- prefix for backdrop-filter or the
+           blur silently does nothing. */
+        .btn-corporate {
+            -webkit-backdrop-filter: blur(4px);
+        }
+        .data-panel {
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .fade-in-up,
+            .page-section,
+            #intro-motto,
+            #intro-bg {
+                transition: none !important;
+            }
+            .animate-marquee,
+            .animate-pulse-slow,
+            .animate-typing,
+            .animate-float {
+                animation: none !important;
+            }
+        }
         
         
         @keyframes typing {
